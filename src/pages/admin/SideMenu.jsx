@@ -144,17 +144,16 @@ function SideMenu() {
                       </Link>
                     </li>
                     <li className="nav-item">
-                    <Link
+                      <Link
                         to={"/CarModels"}
                         className="nav-link"
                         data-key="t-sweet-alerts"
                       >
                         Models
                       </Link>
-                      
                     </li>
                     <li className="nav-item">
-                    <Link
+                      <Link
                         to={"/CarTrims"}
                         className="nav-link"
                         data-key="t-sweet-alerts"
@@ -163,12 +162,12 @@ function SideMenu() {
                       </Link>
                     </li>
                     <Link
-                        to={"/CarStandardFeature"}
-                        className="nav-link"
-                        data-key="t-sweet-alerts"
-                      >
-                        Standard Features
-                      </Link>
+                      to={"/CarStandardFeature"}
+                      className="nav-link"
+                      data-key="t-sweet-alerts"
+                    >
+                      Standard Features
+                    </Link>
                   </ul>
                 </div>
               </li>
@@ -183,16 +182,16 @@ function SideMenu() {
                 <span data-key="t-pages">Database</span>
               </li>
               <li className="nav-item">
-                <a className="nav-link menu-link" href="widgets.html">
+                <Link className="nav-link menu-link" to={"/CarsForSell"}>
                   <i className="ri-police-car-fill"></i>{" "}
                   <span data-key="t-widgets">Cars For Sell </span>
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link menu-link" href="widgets.html">
-                  <i className="ri-truck-line"></i>{" "}
-                  <span data-key="t-widgets">Cars For Rent </span>
-                </a>
+              <Link className="nav-link menu-link" to={"/CarsForRent"}>
+                  <i className="ri-police-car-fill"></i>{" "}
+                  <span data-key="t-widgets">Cars For Rent  </span>
+                </Link>
               </li>
 
               <li className="menu-title">

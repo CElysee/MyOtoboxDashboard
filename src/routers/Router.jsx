@@ -8,6 +8,8 @@ import CarBrands from "../pages/admin/CarBrands"
 import CarModels from "../pages/admin/CarModels"
 import CarStandardFeature from "../pages/admin/CarStandardFeature"
 import CarTrims from "../pages/admin/CarTrims"
+import CarsForSell from "../pages/admin/CarsForSell"
+import CarsForRent from "../pages/admin/CarsForRent"
 
 function Router() {
   return (
@@ -19,6 +21,8 @@ function Router() {
       <Route path="/CarModels" element={<CarModels />} />
       <Route path="/CarStandardFeature" element={<CarStandardFeature />} />
       <Route path="/CarTrims" element={<CarTrims />} />
+      <Route path="/CarsForSell" element={<CarsForSell />} />
+      <Route path="/CarsForRent" element={<CarsForRent />} />
     </Routes>
   )
 }
