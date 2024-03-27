@@ -1,0 +1,23 @@
+.text-dark {
+  --vz-text-opacity: 1;
+  color: #262626;
+}
+.bg-info{
+  --vz-bg-opacity: 1;
+  background-color: #ffc402 !important;
+
+}
+.active>.page-link, .page-link.active {
+  z-index: 3;
+  color: #262626;
+  background-color: #ffc402;
+  border-color: #ffc402;
+}
+.logo-sm svg {
+  width: 200px;
+  height: auto;
+}
+.logo-lg svg{
+  width: 200px;
+  height: auto;
+}
