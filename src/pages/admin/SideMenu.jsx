@@ -60,23 +60,22 @@ function SideMenu() {
       </div>
       <div className="app-menu navbar-menu">
         <div className="navbar-brand-box">
-          <a href="index.html" className="logo logo-dark">
+          <Link to={"/AdminDashboard"} className="logo logo-dark">
             <span className="logo-sm">
               <img src="assets/images/logo-sm.png" alt="" height="22" />
             </span>
             <span className="logo-lg">
               <img src="assets/images/logo-dark.png" alt="" height="17" />
             </span>
-          </a>
-
-          <a href="index.html" className="logo logo-light">
+          </Link>
+          <Link to={"/AdminDashboard"} className="logo logo-light">
             <span className="logo-sm">
               <img src="assets/images/logo-sm.png" alt="" height="22" />
             </span>
             <span className="logo-lg">
               <img src="assets/images/logo-light.png" alt="" height="17" />
             </span>
-          </a>
+          </Link>
           <button
             type="button"
             className="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
@@ -93,10 +92,10 @@ function SideMenu() {
                 <span data-key="t-menu">Menu</span>
               </li>
               <li className="nav-item">
-                <a className="nav-link menu-link" href="#sidebarDashboards">
+                <Link className="nav-link menu-link" to={"/AdminDashboard"}>
                   <i className="ri-dashboard-2-line"></i>{" "}
                   <span data-key="t-dashboards">Dashboard</span>
-                </a>
+                </Link>
               </li>
 
               <li className="menu-title">
@@ -188,9 +187,9 @@ function SideMenu() {
                 </Link>
               </li>
               <li className="nav-item">
-              <Link className="nav-link menu-link" to={"/CarsForRent"}>
+                <Link className="nav-link menu-link" to={"/CarsForRent"}>
                   <i className="ri-police-car-fill"></i>{" "}
-                  <span data-key="t-widgets">Cars For Rent  </span>
+                  <span data-key="t-widgets">Cars For Rent </span>
                 </Link>
               </li>
 

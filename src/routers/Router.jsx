@@ -14,7 +14,7 @@ import CarsForRent from "../pages/admin/CarsForRent"
 function Router() {
   return (
     <Routes>
-      <Route path="/" element={<AdminDashboard />} />
+      <Route path="/AdminDashboard" element={<AdminDashboard />} />
       <Route path="/AdminUsers" element={<AdminUsers />} />
       <Route path="/AllUsers" element={<AllUsers />} />
       <Route path="/CarBrands" element={<CarBrands />} />

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function TopMenu() {
   return (
@@ -7,7 +8,7 @@ function TopMenu() {
         <div className="navbar-header">
           <div className="d-flex">
             <div className="navbar-brand-box horizontal-logo">
-              <a href="#" className="logo logo-dark">
+              <Link to={"/AdminDashboard"} className="logo logo-dark">
                 <span className="logo-lg">
                   <svg
                     width="890.5000000000001"
@@ -38,9 +39,8 @@ function TopMenu() {
                     </g>
                   </svg>
                 </span>
-              </a>
-
-              <a href="index.html" className="logo logo-light">
+              </Link>
+              <Link to={"/AdminDashboard"} className="logo logo-light">
                 <span className="logo-lg">
                   <svg
                     width="890.5000000000001"
@@ -71,9 +71,8 @@ function TopMenu() {
                     </g>
                   </svg>
                 </span>
-              </a>
+              </Link>
             </div>
-
             <button
               type="button"
               className="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger"
