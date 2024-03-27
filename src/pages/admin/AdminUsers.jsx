@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TopMenu from "./TopMenu";
 import SideMenu from "./SideMenu";
 import $ from "jquery"; // Import jQuery
@@ -6,17 +6,37 @@ import "datatables.net"; // Import DataTables library
 import "datatables.net-bs5"; // Import DataTables Bootstrap 5 integration
 import "datatables.net-bs5/css/dataTables.bootstrap5.min.css"; // Import DataTables Bootstrap 5 CSS
 import AddNewUser from "./modals/AddNewUser";
+import axiosInstance from "../../utils/axiosInstance";
 
 function AdminUsers() {
   const tableRef = useRef(null);
+  const [userCounts, setUserCounts] = useState("");
+  const [allAdminUsers, setAllAdminUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [userRefresh, setUserRefresh] = useState(false);
   useEffect(() => {
-    // Initialize DataTable on component mount
-    $(tableRef.current).DataTable();
-    // Clean up on component unmount
-    return () => {
-      $(tableRef.current).DataTable().destroy();
+    //fetch all admin users count
+    const fetchAllAdminUsers = async () => {
+      try {
+        const response = await axiosInstance.get("/auth/user_count");
+        const allUsers = await axiosInstance.get("/auth/all_admin_users");
+        setUserCounts(response.data);
+        setAllAdminUsers(allUsers.data);
+        setIsLoading(false); // Data fetching completed
+        dismissButtonRef.current.click();
+      } catch (error) {
+        console.error(error);
+        setIsLoading(false); // Data fetching completed
+      }
     };
-  }, []);
+    fetchAllAdminUsers();
+  }, [userRefresh]);
+  useEffect(() => {
+    if (!isLoading && tableRef.current) {
+      // Initialize DataTable only when data fetching is completed and tableRef is available
+      $(tableRef.current).DataTable();
+    }
+  }, [isLoading]);
   return (
     <div id="layout-wrapper">
       <TopMenu />
@@ -45,9 +65,8 @@ function AdminUsers() {
                           <i className="ri-add-circle-line align-middle me-1"></i>{" "}
                           Add new user
                         </button>
-                        <AddNewUser />
+                        <AddNewUser userRefresh={setUserRefresh} />
                       </div>
-                     
                     </div>
                   </div>
                 </div>
@@ -65,7 +84,7 @@ function AdminUsers() {
                         </p>
                       </div>
                       <div className="flex-shrink-0">
-                        <h5 className="text-success fs-14 mb-0">
+                        <h5 className="text-danger fs-14 mb-0">
                           <i className="ri-arrow-right-up-line fs-13 align-middle"></i>{" "}
                           +16.24 %
                         </h5>
@@ -74,16 +93,14 @@ function AdminUsers() {
                     <div className="d-flex align-items-end justify-content-between mt-4">
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
-                          $
                           <span className="counter-value" data-target="559.25">
-                            0
+                            {userCounts.recently_registered}
                           </span>
-                          k{" "}
                         </h4>
                       </div>
                       <div className="avatar-sm flex-shrink-0">
-                        <span className="avatar-title bg-primary-subtle rounded fs-3">
-                          <i className="bx bx-dollar-circle text-primary"></i>
+                        <span className="avatar-title bg-info rounded fs-3">
+                          <i className="bx bx-user-plus text-dark"></i>
                         </span>
                       </div>
                     </div>
@@ -102,7 +119,7 @@ function AdminUsers() {
                       </div>
                       <div className="flex-shrink-0">
                         <h5 className="text-danger fs-14 mb-0">
-                          <i className="ri-arrow-right-down-line fs-13 align-middle"></i>{" "}
+                          <i className="bx bx-user-check fs-13 align-middle"></i>{" "}
                           -3.57 %
                         </h5>
                       </div>
@@ -111,13 +128,13 @@ function AdminUsers() {
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                           <span className="counter-value" data-target="36894">
-                            0
+                            {userCounts.active_users}
                           </span>
                         </h4>
                       </div>
                       <div className="avatar-sm flex-shrink-0">
-                        <span className="avatar-title bg-info-subtle rounded fs-3">
-                          <i className="bx bx-shopping-bag text-info"></i>
+                        <span className="avatar-title bg-info rounded fs-3">
+                          <i className="bx bx-user-check text-dark"></i>
                         </span>
                       </div>
                     </div>
@@ -135,7 +152,7 @@ function AdminUsers() {
                         </p>
                       </div>
                       <div className="flex-shrink-0">
-                        <h5 className="text-success fs-14 mb-0">
+                        <h5 className="text-danger fs-14 mb-0">
                           <i className="ri-arrow-right-up-line fs-13 align-middle"></i>{" "}
                           +29.08 %
                         </h5>
@@ -145,14 +162,13 @@ function AdminUsers() {
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                           <span className="counter-value" data-target="183.35">
-                            0
+                            {userCounts.user_count}
                           </span>
-                          M{" "}
                         </h4>
                       </div>
                       <div className="avatar-sm flex-shrink-0">
-                        <span className="avatar-title bg-primary-subtle rounded fs-3">
-                          <i className="bx bx-user-circle text-primary"></i>
+                        <span className="avatar-title bg-info rounded fs-3">
+                          <i className="bx bx-user-circle text-dark"></i>
                         </span>
                       </div>
                     </div>
@@ -188,48 +204,53 @@ function AdminUsers() {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>01</td>
-                          <td>VLZ-452</td>
-                          <td>VLZ1400087402</td>
-                          <td>Joseph Parker</td>
-                          <td>Alexis Clarke</td>
-                          <td>03 Oct, 2021</td>
-                          <td>
-                            <span className="badge bg-info text-dark">
-                              Re-open
-                            </span>
-                          </td>
-                          <td>
-                            <span className="badge bg-danger">High</span>
-                          </td>
-                          <td>
-                            <div className="dropdown d-inline-block">
-                              <button
-                                className="btn btn-soft-secondary btn-sm dropdown"
-                                type="button"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
-                              >
-                                <i className="ri-more-fill align-middle"></i>
-                              </button>
-                              <ul className="dropdown-menu dropdown-menu-end">
-                                <li>
-                                  <a className="dropdown-item edit-item-btn">
-                                    <i className="ri-pencil-fill align-bottom me-2 text-muted"></i>{" "}
-                                    Edit
-                                  </a>
-                                </li>
-                                <li>
-                                  <a className="dropdown-item remove-item-btn">
-                                    <i className="ri-delete-bin-fill align-bottom me-2 text-muted"></i>{" "}
-                                    Delete
-                                  </a>
-                                </li>
-                              </ul>
-                            </div>
-                          </td>
-                        </tr>
+                        {allAdminUsers.length > 0 &&
+                          allAdminUsers.map((user, index) => (
+                            <tr key={index}>
+                              <td>{index + 1}</td>
+                              <td>
+                                {user.firstName} {user.lastName}
+                              </td>
+                              <td>{user.email}</td>
+                              <td>{user.phone_number}</td>
+                              <td>{user.gender}</td>
+                              <td>{user.role}</td>
+                              <td>
+                                <span className="badge bg-info text-dark">
+                                  {user.account_status == true
+                                    ? "Active"
+                                    : "Inactive"}
+                                </span>
+                              </td>
+                              <td>{user.created_at}</td>
+                              <td>
+                                <div className="dropdown d-inline-block">
+                                  <button
+                                    className="btn btn-soft-secondary btn-sm dropdown"
+                                    type="button"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                  >
+                                    <i className="ri-more-fill align-middle"></i>
+                                  </button>
+                                  <ul className="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                      <a className="dropdown-item edit-item-btn">
+                                        <i className="ri-pencil-fill align-bottom me-2 text-muted"></i>{" "}
+                                        Edit
+                                      </a>
+                                    </li>
+                                    <li>
+                                      <a className="dropdown-item remove-item-btn">
+                                        <i className="ri-delete-bin-fill align-bottom me-2 text-muted"></i>{" "}
+                                        Delete
+                                      </a>
+                                    </li>
+                                  </ul>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
                       </tbody>
                     </table>
                   </div>

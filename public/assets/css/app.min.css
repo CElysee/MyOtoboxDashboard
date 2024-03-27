@@ -5256,7 +5256,7 @@ button {
 }
 
 .btn:hover {
-    color: var(--primary-text-color-yellow);
+    color: var(--primary-text-color-yellow) !important;
     background-color: var(--primary-text-color-dark);
     border-color: var(--vz-btn-hover-border-color);
   }

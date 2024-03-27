@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TopMenu from "./TopMenu";
 import SideMenu from "./SideMenu";
 import $ from "jquery"; // Import jQuery
@@ -8,6 +8,7 @@ import "datatables.net-bs5/css/dataTables.bootstrap5.min.css"; // Import DataTab
 
 function AllUsers() {
   const tableRef = useRef(null);
+  const [userCounts, setUserCounts] = useState("");
   useEffect(() => {
     // Initialize DataTable on component mount
     $(tableRef.current).DataTable();
@@ -59,9 +60,8 @@ function AllUsers() {
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                           $
                           <span className="counter-value" data-target="559.25">
-                            0
+                            {userCounts.recently_registered}
                           </span>
-                          k{" "}
                         </h4>
                       </div>
                       <div className="avatar-sm flex-shrink-0">
@@ -94,7 +94,7 @@ function AllUsers() {
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                           <span className="counter-value" data-target="36894">
-                            0
+                          {userCounts.active_users}
                           </span>
                         </h4>
                       </div>
@@ -128,9 +128,8 @@ function AllUsers() {
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                           <span className="counter-value" data-target="183.35">
-                            0
+                            {userCounts.all_users}
                           </span>
-                          M{" "}
                         </h4>
                       </div>
                       <div className="avatar-sm flex-shrink-0">
