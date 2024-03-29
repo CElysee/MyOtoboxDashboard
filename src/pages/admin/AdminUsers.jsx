@@ -6,7 +6,11 @@ import "datatables.net"; // Import DataTables library
 import "datatables.net-bs5"; // Import DataTables Bootstrap 5 integration
 import "datatables.net-bs5/css/dataTables.bootstrap5.min.css"; // Import DataTables Bootstrap 5 CSS
 import AddNewUser from "./modals/AddNewUser";
+import EditAdminUser from "./modals/EditAdminUser";
 import axiosInstance from "../../utils/axiosInstance";
+import RiseLoader from "react-spinners/RiseLoader";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function AdminUsers() {
   const tableRef = useRef(null);
@@ -14,6 +18,18 @@ function AdminUsers() {
   const [allAdminUsers, setAllAdminUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [userRefresh, setUserRefresh] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [userValues, setUserValues] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone_number: "",
+    role: "",
+    country_id: "",
+    password: "",
+    gender: "",
+  });
   useEffect(() => {
     //fetch all admin users count
     const fetchAllAdminUsers = async () => {
@@ -23,7 +39,6 @@ function AdminUsers() {
         setUserCounts(response.data);
         setAllAdminUsers(allUsers.data);
         setIsLoading(false); // Data fetching completed
-        dismissButtonRef.current.click();
       } catch (error) {
         console.error(error);
         setIsLoading(false); // Data fetching completed
@@ -31,16 +46,56 @@ function AdminUsers() {
     };
     fetchAllAdminUsers();
   }, [userRefresh]);
+  
   useEffect(() => {
-    if (!isLoading && tableRef.current) {
-      // Initialize DataTable only when data fetching is completed and tableRef is available
-      $(tableRef.current).DataTable();
-    }
+    const table = $(!isLoading && tableRef.current).DataTable({
+      dom: "lBfrtip", // 'l' for length menu (entries per page dropdown)
+      scrollX: true,
+      buttons: [
+        "excelHtml5", // Excel export button
+        "csvHtml5", // CSV export button
+        // 'pdfHtml5', // PDF export button
+        // 'print', // Print button
+      ],
+      lengthMenu: [10, 25, 50, 100], // Entries per page options
+      pageLength: 10, // Initial entries per page
+      // Other DataTables configurations
+    });
+    return () => {
+      table.destroy(); // Clean up DataTable when component unmounts
+    };
   }, [isLoading]);
+
+  const handleEditUser = (user) => {
+    setSelectedUser(user);
+    setShowModal(true);
+  };
+
+  const handleUserDelete = async (userId) => {
+    try {
+      await axiosInstance.delete(`/auth/delete_user/${userId}`);
+      setUserRefresh(true);
+      notify("User deleted successfully", "success");
+    } catch (error) {
+      console.error("Error deleting user: ", error);
+    }
+  };
+  const notify = (message, type) => {
+    if (type === "success") {
+      toast.success(message, {
+        icon: "👏",
+      });
+    } else if (type === "error") {
+      toast.error(message, {
+        icon: "😬",
+      });
+    }
+  };
   return (
     <div id="layout-wrapper">
       <TopMenu />
       <SideMenu />
+      <ToastContainer autoClose={4000} />
       <div className="main-content">
         <div className="page-content">
           <div className="container-fluid">
@@ -200,6 +255,7 @@ function AdminUsers() {
                           <th>Role</th>
                           <th>Status</th>
                           <th>Create Date</th>
+                          <th>Last Login</th>
                           <th>Action</th>
                         </tr>
                       </thead>
@@ -223,6 +279,7 @@ function AdminUsers() {
                                 </span>
                               </td>
                               <td>{user.created_at}</td>
+                              <td>{user.last_login}</td>
                               <td>
                                 <div className="dropdown d-inline-block">
                                   <button
@@ -235,16 +292,28 @@ function AdminUsers() {
                                   </button>
                                   <ul className="dropdown-menu dropdown-menu-end">
                                     <li>
-                                      <a className="dropdown-item edit-item-btn">
+                                      <button
+                                        type="button"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editModal"
+                                        className="dropdown-item edit-item-btn"
+                                        onClick={() => handleEditUser(user)}
+                                      >
                                         <i className="ri-pencil-fill align-bottom me-2 text-muted"></i>{" "}
                                         Edit
-                                      </a>
+                                      </button>
                                     </li>
                                     <li>
-                                      <a className="dropdown-item remove-item-btn">
+                                      <button
+                                        className="dropdown-item remove-item-btn"
+                                        type="button"
+                                        onClick={() =>
+                                          handleUserDelete(user.id)
+                                        }
+                                      >
                                         <i className="ri-delete-bin-fill align-bottom me-2 text-muted"></i>{" "}
                                         Delete
-                                      </a>
+                                      </button>
                                     </li>
                                   </ul>
                                 </div>
@@ -253,6 +322,12 @@ function AdminUsers() {
                           ))}
                       </tbody>
                     </table>
+                    {}
+                    <EditAdminUser
+                      user={selectedUser}
+                      showModal={showModal}
+                      userRefresh={setUserRefresh}
+                    />
                   </div>
                 </div>
               </div>

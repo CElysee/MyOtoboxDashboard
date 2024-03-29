@@ -6685,8 +6685,8 @@ button {
 }
 
 .nav-info .nav-link.active {
-    color: #fff;
-    background-color: #73dce9
+    color: #262626;
+    background-color: #ffc402;
 }
 
 .nav-info.nav-tabs .nav-link.active {
@@ -6704,7 +6704,7 @@ button {
 }
 
 .nav-info.arrow-navtabs .nav-link.active::before {
-    border-top-color: #73dce9
+    border-top-color: #ffc402;
 }
 
 .nav-info.custom-verti-nav-pills .nav-link.active::before {
@@ -6817,6 +6817,13 @@ button {
 
 .nav-dark.custom-verti-nav-pills .nav-link.active::before {
     border-left-color: #343a40
+}
+.custom-tabs{
+    display: flex;
+    justify-content: space-around;
+}
+.custom-tabs li{
+    justify-content: space-around;
 }
 
 .progress-nav {
@@ -18176,5 +18183,7 @@ span.flatpickr-weekday {
     bottom: -18px;
     right: -35px
 }
-
+.Toastify__toast-body > div:last-child {
+    font-family: var(--vz-body-font-family) !important;
+}
 /*# sourceMappingURL=app.min.css.map */
