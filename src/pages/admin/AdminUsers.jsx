@@ -11,6 +11,7 @@ import axiosInstance from "../../utils/axiosInstance";
 import RiseLoader from "react-spinners/RiseLoader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useSelector } from "react-redux";
 
 function AdminUsers() {
   const tableRef = useRef(null);
@@ -34,10 +35,9 @@ function AdminUsers() {
     //fetch all admin users count
     const fetchAllAdminUsers = async () => {
       try {
-        const response = await axiosInstance.get("/auth/user_count");
         const allUsers = await axiosInstance.get("/auth/all_admin_users");
-        setUserCounts(response.data);
-        setAllAdminUsers(allUsers.data);
+        setUserCounts(allUsers.data.counts);
+        setAllAdminUsers(allUsers.data.users);
         setIsLoading(false); // Data fetching completed
       } catch (error) {
         console.error(error);
@@ -46,7 +46,7 @@ function AdminUsers() {
     };
     fetchAllAdminUsers();
   }, [userRefresh]);
-  
+
   useEffect(() => {
     const table = $(!isLoading && tableRef.current).DataTable({
       dom: "lBfrtip", // 'l' for length menu (entries per page dropdown)
@@ -91,6 +91,7 @@ function AdminUsers() {
       });
     }
   };
+  const greeting = useSelector(state => state.greeting);
   return (
     <div id="layout-wrapper">
       <TopMenu />
@@ -103,7 +104,7 @@ function AdminUsers() {
               <div className="col-12">
                 <div className="d-flex align-items-lg-center flex-lg-row flex-column">
                   <div className="flex-grow-1">
-                    <h4 className="fs-16 mb-1">Good Morning, Anna!</h4>
+                    <h4 className="fs-16 mb-1">{greeting.greeting_time}, Anna!</h4>
                     <p className="text-muted mb-0">
                       Here's what's happening with your store today.
                     </p>

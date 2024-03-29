@@ -1,8 +1,10 @@
 import React from "react";
 import TopMenu from "./TopMenu";
 import SideMenu from "./SideMenu";
+import { useSelector } from "react-redux";
 
 function Dashboard() {
+  const greeting = useSelector(state => state.greeting);
   return (
     <div id="layout-wrapper">
       <TopMenu />
@@ -17,7 +19,7 @@ function Dashboard() {
                     <div className="col-12">
                       <div className="d-flex align-items-lg-center flex-lg-row flex-column">
                         <div className="flex-grow-1">
-                          <h4 className="fs-16 mb-1">Good Morning, Anna!</h4>
+                          <h4 className="fs-16 mb-1">{greeting.greeting_time}, Anna!</h4>
                           <p className="text-muted mb-0">
                             Here's what's happening with MyOtobox today.
                           </p>

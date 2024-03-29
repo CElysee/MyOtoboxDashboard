@@ -24,7 +24,7 @@ function AddNewTrim() {
               ></button>
             </div>
             <div className="modal-body">
-              <form action="javascript:void(0);">
+              <form action="">
                 <div className="row g-3">
                   <div className="col-xxl-6">
                     <div>
