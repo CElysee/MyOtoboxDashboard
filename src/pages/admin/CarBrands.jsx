@@ -27,6 +27,7 @@ function CarBrands() {
   const [userRefresh, setUserRefresh] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectCarBrand, setSelectCarBrand] = useState("");
+  const [countsBrands, setCountsBrands] = useState(""); 
   const greeting = useSelector((state) => state.greeting);
   const imageBaseUrl = import.meta.env.VITE_REACT_APP_API;
 
@@ -34,7 +35,8 @@ function CarBrands() {
     const fetchBrands = async () => {
       try {
         const response = await axiosInstance.get("/car_brand/list");
-        setBrandsList(response.data);
+        setBrandsList(response.data.car_brand);
+        setCountsBrands(response.data.counts);
         // setIsLoading(false);
       } catch (error) {
         console.log(error);
@@ -147,16 +149,14 @@ function CarBrands() {
                     <div className="d-flex align-items-end justify-content-between mt-4">
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
-                          $
                           <span className="counter-value" data-target="559.25">
-                            0
+                            {countsBrands.car_brand}
                           </span>
-                          k{" "}
                         </h4>
                       </div>
                       <div className="avatar-sm flex-shrink-0">
-                        <span className="avatar-title bg-primary-subtle rounded fs-3">
-                          <i className="bx bx-dollar-circle text-primary"></i>
+                        <span className="avatar-title bg-info rounded fs-3">
+                          <i className="bx bx-car text-dark"></i>
                         </span>
                       </div>
                     </div>
@@ -184,13 +184,13 @@ function CarBrands() {
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                           <span className="counter-value" data-target="36894">
-                            0
+                            {countsBrands.car_model}
                           </span>
                         </h4>
                       </div>
                       <div className="avatar-sm flex-shrink-0">
-                        <span className="avatar-title bg-info-subtle rounded fs-3">
-                          <i className="bx bx-shopping-bag text-info"></i>
+                      <span className="avatar-title bg-info rounded fs-3">
+                          <i className="bx bxs-car-garage text-dark"></i>
                         </span>
                       </div>
                     </div>
@@ -218,14 +218,13 @@ function CarBrands() {
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                           <span className="counter-value" data-target="183.35">
-                            0
+                            {countsBrands.car_trim}
                           </span>
-                          M{" "}
                         </h4>
                       </div>
                       <div className="avatar-sm flex-shrink-0">
-                        <span className="avatar-title bg-primary-subtle rounded fs-3">
-                          <i className="bx bx-user-circle text-primary"></i>
+                      <span className="avatar-title bg-info rounded fs-3">
+                          <i className="bx bxs-car-mechanic text-dark"></i>
                         </span>
                       </div>
                     </div>
