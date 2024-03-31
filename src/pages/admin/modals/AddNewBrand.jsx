@@ -10,7 +10,7 @@ const override = {
   borderColor: "#e55812",
   paddingRight: "10px",
 };
-function AddNewBrand({userRefresh}) {
+function AddNewBrand({ userRefresh }) {
   const [countries, setCountries] = useState("");
   const [loading, setLoading] = useState(false);
   const [color, setColor] = useState("#fff");
@@ -32,6 +32,7 @@ function AddNewBrand({userRefresh}) {
     };
     fetchCountries();
   }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "brand_logo") {
@@ -52,26 +53,17 @@ function AddNewBrand({userRefresh}) {
       formData.append("brand_logo", inputValues.brand_logo);
 
       console.log(...formData.entries());
-      try {
-        const response = await axiosInstance.post(
-          "/car_brand/create",
-          formData,
-          {
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-        console.log("Submission successful:", response.data);
-        // console.log(response.data);
-        notify(response.data.message, "success");
-        setLoading(false);
-        userRefresh(true);
-      } catch (error) {
-        console.error("Submission failed:", error);
-      }
-
+      const response = await axiosInstance.post("/car_brand/create", formData, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("Submission successful:", response.data);
+      // console.log(response.data);
+      notify(response.data.message, "success");
+      setLoading(false);
+      userRefresh(true);
       dismissButtonRef.current.click();
     } catch (error) {
       console.error("Error:", error);
@@ -93,7 +85,7 @@ function AddNewBrand({userRefresh}) {
 
   return (
     <>
-      <ToastContainer autoClose={false} />
+      {/* <ToastContainer autoClose={4000} /> */}
       <div
         className="modal fade fadeInRight"
         id="exampleModalgrid"

@@ -39,6 +39,7 @@ function AdminUsers() {
         setUserCounts(allUsers.data.counts);
         setAllAdminUsers(allUsers.data.users);
         setIsLoading(false); // Data fetching completed
+        setUserRefresh(false);
       } catch (error) {
         console.error(error);
         setIsLoading(false); // Data fetching completed

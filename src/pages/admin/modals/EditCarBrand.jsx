@@ -24,8 +24,6 @@ function EditCarBrand({ userRefresh, brand, showModal }) {
 
   useEffect(() => {
     if (showModal === true) {
-      console.log(brand);
-      console.log(showModal);
       setInputValues((prevInputValues) => ({
         ...prevInputValues,
         brand_name: brand.name || "",
@@ -103,7 +101,7 @@ function EditCarBrand({ userRefresh, brand, showModal }) {
 
   return (
     <>
-      <ToastContainer autoClose={4000} />
+      {/* <ToastContainer autoClose={4000} /> */}
       <div
         className="modal fade fadeInRight"
         id="editCarBrandModal"
@@ -213,7 +211,7 @@ function EditCarBrand({ userRefresh, brand, showModal }) {
                                 data-testid="loader"
                               />
                             ) : (
-                              "Save"
+                              "Updated Brand"
                             )}
                           </button>
                         </div>

@@ -10,17 +10,29 @@ const override = {
   borderColor: "#e55812",
   paddingRight: "10px",
 };
-function AddNewModel({ userRefresh }) {
+function EditCarModel({ carModel, userRefresh, showModal }) {
   const [allBrands, setAllBrands] = useState([]);
   const [loading, setLoading] = useState(false);
   const [color, setColor] = useState("#fff");
   const dismissButtonRef = useRef();
+  const imageBaseUrl = import.meta.env.VITE_REACT_APP_API;
   const [inputValues, setInputValues] = useState({
     brand_model_name: "",
     brand_id: "",
     production_years: "",
     brand_model_image: "",
   });
+
+  useEffect(() => {
+    if (showModal === true) {
+      setInputValues((prevInputValues) => ({
+        ...prevInputValues,
+        brand_model_name: carModel.brand_model_name || "",
+        brand_id: carModel.brand_id || "",
+        production_years: carModel.production_years || "",
+      }));
+    }
+  }, [carModel]);
 
   useEffect(() => {
     const fetchBrands = async () => {
@@ -53,10 +65,11 @@ function AddNewModel({ userRefresh }) {
       formData.append("brand_id", inputValues.brand_id);
       formData.append("production_years", inputValues.production_years);
       formData.append("brand_model_image", inputValues.brand_model_image);
-      console.log(...formData.entries());
+      formData.append("id", carModel.id);
+
       try {
-        const response = await axiosInstance.post(
-          "/car_model/create",
+        const response = await axiosInstance.put(
+          "/car_model/update",
           formData,
           {
             headers: {
@@ -90,16 +103,16 @@ function AddNewModel({ userRefresh }) {
     <>
       <div
         className="modal fade fadeInRight"
-        id="exampleModalgrid"
+        id="editCarModelModal"
         tabIndex="-1"
-        aria-labelledby="exampleModalgridLabel"
+        aria-labelledby="editCarModelModalLabel"
         aria-modal="true"
       >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalgridLabel">
-                Add New Model
+              <h5 className="modal-title" id="editCarModelModalLabel">
+                Add New Model - {carModel.brand_model_name}
               </h5>
               <button
                 type="button"
@@ -122,7 +135,6 @@ function AddNewModel({ userRefresh }) {
                         className="form-control"
                         value={inputValues.brand_id}
                         onChange={handleInputChange}
-                        required
                       >
                         <option>Select brand</option>
                         {allBrands.length > 0 &&
@@ -147,7 +159,6 @@ function AddNewModel({ userRefresh }) {
                         name="brand_model_name"
                         value={inputValues.brand_model_name}
                         onChange={handleInputChange}
-                        required
                       />
                     </div>
                   </div>
@@ -164,7 +175,6 @@ function AddNewModel({ userRefresh }) {
                         name="production_years"
                         value={inputValues.production_years}
                         onChange={handleInputChange}
-                        required
                       />
                     </div>
                   </div>
@@ -179,8 +189,12 @@ function AddNewModel({ userRefresh }) {
                         id="formFile"
                         name="brand_model_image"
                         onChange={handleInputChange}
-                        required
                       />
+                      <img
+                            src={`${imageBaseUrl}${carModel.brand_model_image}`}
+                            width={""}
+                            style={{ paddingTop: "10px", width: "50px" }}
+                          ></img>
                     </div>
                   </div>
                   <div className="col-lg-12">
@@ -219,4 +233,4 @@ function AddNewModel({ userRefresh }) {
   );
 }
 
-export default AddNewModel;
+export default EditCarModel;

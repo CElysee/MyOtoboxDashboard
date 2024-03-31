@@ -6,5 +6,4 @@ const store = configureStore({
     greeting: greetingReducer, // Add the slice reducer to the store
   },
 });
-
 export {store};

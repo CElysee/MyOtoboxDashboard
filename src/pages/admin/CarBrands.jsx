@@ -24,12 +24,11 @@ function CarBrands() {
   const tableRef = useRef(null);
   const [brandsList, setBrandsList] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [userRefresh, setUserRefresh] = useState("");
+  const [userRefresh, setUserRefresh] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectCarBrand, setSelectCarBrand] = useState("");
   const [countsBrands, setCountsBrands] = useState(""); 
-  const greeting = useSelector((state) => state.greeting);
-  const imageBaseUrl = import.meta.env.VITE_REACT_APP_API;
+
 
   useEffect(() => {
     const fetchBrands = async () => {
@@ -37,7 +36,8 @@ function CarBrands() {
         const response = await axiosInstance.get("/car_brand/list");
         setBrandsList(response.data.car_brand);
         setCountsBrands(response.data.counts);
-        // setIsLoading(false);
+        setUserRefresh(false);
+        setIsLoading(false);
       } catch (error) {
         console.log(error);
       }
@@ -90,6 +90,8 @@ function CarBrands() {
       });
     }
   };
+  const greeting = useSelector((state) => state.greeting);
+  const imageBaseUrl = import.meta.env.VITE_REACT_APP_API;
   return (
     <div id="layout-wrapper">
       <ToastContainer autoClose={5000} />
