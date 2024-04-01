@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TopMenu from "./TopMenu";
 import SideMenu from "./SideMenu";
 import $ from "jquery"; // Import jQuery
@@ -13,9 +13,30 @@ import "jszip/dist/jszip"; // JSZip for Excel export
 import "datatables.net-buttons/js/buttons.flash.min"; // Flash export (optional)
 import "datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css"; // Buttons Bootstrap 5 CSS
 import AddNewCar from "./modals/AddNewCar";
+import axiosInstance from "../../utils/axiosInstance";
+import RiseLoader from "react-spinners/RiseLoader";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 function CarsForSell() {
   const tableRef = useRef(null);
+  const [dashboardCounts, setDashboardCounts] = useState("")
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axiosInstance.get(
+          "/car_for_sale/car_brands"
+        );
+        setDashboardCounts(response.data.counts);
+      } catch (error) {
+        console.log("Error fetching data", error);
+      }
+    };
+    fetchData();
+  }, []);
+
   useEffect(() => {
     const table = $(tableRef.current).DataTable({
       dom: "lBfrtip", // 'l' for length menu (entries per page dropdown)
@@ -34,6 +55,7 @@ function CarsForSell() {
       table.destroy(); // Clean up DataTable when component unmounts
     };
   }, []);
+
   return (
     <div id="layout-wrapper">
       <TopMenu />
@@ -70,7 +92,7 @@ function CarsForSell() {
               </div>
             </div>
             <div className="row">
-              <div className="col-xl-4 col-md-6">
+              <div className="col-xl-3 col-md-6">
                 <div className="card card-animate">
                   <div className="card-body">
                     <div className="d-flex align-items-center">
@@ -90,16 +112,14 @@ function CarsForSell() {
                     <div className="d-flex align-items-end justify-content-between mt-4">
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
-                          $
                           <span className="counter-value" data-target="559.25">
-                            0
+                            {dashboardCounts.brand_count}
                           </span>
-                          k{" "}
                         </h4>
                       </div>
                       <div className="avatar-sm flex-shrink-0">
-                        <span className="avatar-title bg-primary-subtle rounded fs-3">
-                          <i className="bx bx-dollar-circle text-primary"></i>
+                        <span className="avatar-title bg-info rounded fs-3">
+                          <i className="bx bx-car text-dark"></i>
                         </span>
                       </div>
                     </div>
@@ -107,7 +127,7 @@ function CarsForSell() {
                 </div>
               </div>
 
-              <div className="col-xl-4 col-md-6">
+              <div className="col-xl-3 col-md-6">
                 <div className="card card-animate">
                   <div className="card-body">
                     <div className="d-flex align-items-center">
@@ -127,13 +147,13 @@ function CarsForSell() {
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                           <span className="counter-value" data-target="36894">
-                            0
+                            {dashboardCounts.model_count}
                           </span>
                         </h4>
                       </div>
                       <div className="avatar-sm flex-shrink-0">
-                        <span className="avatar-title bg-info-subtle rounded fs-3">
-                          <i className="bx bx-shopping-bag text-info"></i>
+                        <span className="avatar-title bg-info rounded fs-3">
+                          <i className="bx bxs-car-garage text-dark"></i>
                         </span>
                       </div>
                     </div>
@@ -141,7 +161,7 @@ function CarsForSell() {
                 </div>
               </div>
 
-              <div className="col-xl-4 col-md-6">
+              <div className="col-xl-3 col-md-6">
                 <div className="card card-animate">
                   <div className="card-body">
                     <div className="d-flex align-items-center">
@@ -161,9 +181,41 @@ function CarsForSell() {
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                           <span className="counter-value" data-target="183.35">
-                            0
+                            {dashboardCounts.trim_count}
                           </span>
-                          M{" "}
+                        </h4>
+                      </div>
+                      <div className="avatar-sm flex-shrink-0">
+                        <span className="avatar-title bg-info rounded fs-3">
+                          <i className="bx bxs-car-mechanic text-dark"></i>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-xl-3 col-md-6">
+                <div className="card card-animate">
+                  <div className="card-body">
+                    <div className="d-flex align-items-center">
+                      <div className="flex-grow-1 overflow-hidden">
+                        <p className="text-uppercase fw-medium text-muted text-truncate mb-0">
+                          All Standard Features
+                        </p>
+                      </div>
+                      <div className="flex-shrink-0">
+                        <h5 className="text-success fs-14 mb-0">
+                          <i className="ri-arrow-right-up-line fs-13 align-middle"></i>{" "}
+                          +29.08 %
+                        </h5>
+                      </div>
+                    </div>
+                    <div className="d-flex align-items-end justify-content-between mt-4">
+                      <div>
+                        <h4 className="fs-22 fw-semibold ff-secondary mb-4">
+                          <span className="counter-value" data-target="183.35">
+                            {dashboardCounts.standard_features_count}
+                          </span>
                         </h4>
                       </div>
                       <div className="avatar-sm flex-shrink-0">

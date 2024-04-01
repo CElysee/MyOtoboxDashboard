@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.2",
+    "@tinymce/tinymce-react": "^5.0.0",
     "axios": "^1.6.8",
     "datatables.net-bs5": "^2.0.3",
     "datatables.net-buttons": "^3.0.1",
