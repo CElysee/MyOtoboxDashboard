@@ -24,16 +24,18 @@ function CarModels() {
   const tableRef = useRef(null);
   const [allModelsList, setModelsList] = useState("");
   const [countModels, setCountModels] = useState("");
+  const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [userRefresh, setUserRefresh] = useState(false);
-  const [selectedCarModel, setSelectedCarModel ] = useState(""); 
+  const [selectedCarModel, setSelectedCarModel] = useState("");
   const greeting = useSelector((state) => state.greeting);
   const imageBaseUrl = import.meta.env.VITE_REACT_APP_API;
 
   useEffect(() => {
     const fetchModels = async () => {
       try {
+        setLoading(true);
         const response = await axiosInstance.get("/car_model/list");
         setModelsList(response.data.car_model);
         setCountModels(response.data.counts);
@@ -41,6 +43,7 @@ function CarModels() {
         setUserRefresh(false);
       } catch (error) {
         console.log("Error fetching car models", error);
+        setLoading(false);
       }
     };
     fetchModels();
@@ -70,6 +73,15 @@ function CarModels() {
     setShowModal(true);
   };
 
+  const handleCarModelDelete = async (id) => {
+    try {
+      const response = await axiosInstance.delete(`/car_model/delete/${id}`);
+      setUserRefresh(true)
+      notify(response.data.message, "success");
+    } catch (error) {
+      notify("Error deleting car trim", "error");
+    }
+  };
 
   const notify = (message, type) => {
     if (type === "success") {
@@ -85,7 +97,7 @@ function CarModels() {
 
   return (
     <div id="layout-wrapper">
-      <ToastContainer autoClose={5000} />
+      <ToastContainer autoClose={3000} />
       <TopMenu />
       <SideMenu />
       <div className="main-content">
@@ -114,7 +126,7 @@ function CarModels() {
                           <i className="ri-add-circle-line align-middle me-1"></i>{" "}
                           Add new model
                         </button>
-                        <AddNewModel  userRefresh={setUserRefresh}/>
+                        <AddNewModel userRefresh={setUserRefresh} />
                       </div>
                     </div>
                   </div>
@@ -277,7 +289,7 @@ function CarModels() {
                                   </button>
                                   <ul className="dropdown-menu dropdown-menu-end">
                                     <li>
-                                    <button
+                                      <button
                                         className="dropdown-item edit-item-btn"
                                         type="button"
                                         data-bs-toggle="modal"
@@ -291,10 +303,15 @@ function CarModels() {
                                       </button>
                                     </li>
                                     <li>
-                                      <a className="dropdown-item remove-item-btn">
+                                      <button
+                                        className="dropdown-item remove-item-btn"
+                                        onClick={() =>
+                                          handleCarModelDelete(carModel.id)
+                                        }
+                                      >
                                         <i className="ri-delete-bin-fill align-bottom me-2 text-muted"></i>{" "}
                                         Delete
-                                      </a>
+                                      </button>
                                     </li>
                                   </ul>
                                 </div>

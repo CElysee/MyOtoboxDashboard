@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axiosInstance from "../../../utils/axiosInstance";
 import RiseLoader from "react-spinners/RiseLoader";
 import { ToastContainer, toast } from "react-toastify";
@@ -10,35 +10,27 @@ const override = {
   borderColor: "#e55812",
   paddingRight: "10px",
 };
-function EditCarModel({ carModel, userRefresh, showModal }) {
-  const [allBrands, setAllBrands] = useState([]);
+
+function EditCarTrim({ userRefresh, carTrim, showModal }) {
   const [loading, setLoading] = useState(false);
+  const [allBrands, setAllBrands] = useState([]);
+  const [allModels, setAllModels] = useState([]);
   const [color, setColor] = useState("#fff");
   const dismissButtonRef = useRef();
-  const imageBaseUrl = import.meta.env.VITE_REACT_APP_API;
   const [inputValues, setInputValues] = useState({
-    brand_model_name: "",
-    brand_id: "",
-    production_years: "",
-    brand_model_image: "",
+    car_brand_id: "",
+    car_model_id: "",
+    trim_name: "",
+    engine: "",
+    curb_weight: "",
+    trim_hp: "",
   });
-
-  useEffect(() => {
-    if (showModal === true) {
-      setInputValues((prevInputValues) => ({
-        ...prevInputValues,
-        brand_model_name: carModel.brand_model_name || "",
-        brand_id: carModel.brand_id || "",
-        production_years: carModel.production_years || "",
-      }));
-    }
-  }, [carModel]);
 
   useEffect(() => {
     const fetchBrands = async () => {
       try {
-        const response = await axiosInstance.get("/car_brand/list");
-        setAllBrands(response.data.car_brand);
+        const brand_models = await axiosInstance.get("/car_trim/brand_models");
+        setAllBrands(brand_models.data);
       } catch (error) {
         console.log("Error fetching car brands", error);
       }
@@ -46,48 +38,65 @@ function EditCarModel({ carModel, userRefresh, showModal }) {
     fetchBrands();
   }, []);
 
+  useEffect(() => {
+    if (showModal === true) {
+      const selectedBrandId = carTrim.car_brand_id;
+      const selectedBrand = allBrands.find(
+        (brands) => brands.id === selectedBrandId
+      );
+      const selectedModelId = carTrim.car_model_id;
+      const selectedModel = selectedBrand.models.find(
+        (model) => model.id === selectedModelId
+      );
+      // console.log("Selected model", selectedModel);
+      setAllModels(selectedModel);
+      setInputValues((prevInputValues) => ({
+        ...prevInputValues,
+        car_brand_id: carTrim.car_brand_id || "",
+        car_model_id: carTrim.car_model_id || "",
+        trim_name: carTrim.trim_name || "",
+        engine: carTrim.engine || "",
+        curb_weight: carTrim.curb_weight || "",
+        trim_hp: carTrim.trim_hp || "",
+      }));
+    }
+  }, [carTrim]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name === "brand_model_image") {
-      const selectedFile = e.target.files[0];
-      setInputValues({ ...inputValues, brand_model_image: selectedFile });
-    } else {
-      setInputValues({ ...inputValues, [name]: value });
+    if (name === "car_brand_id") {
+      const selectedBrandId = parseInt(value);
+      const selectedBrand = allBrands.find(
+        (brand) => brand.id === selectedBrandId
+      );
+      if (selectedBrand) {
+        setAllModels(selectedBrand.models);
+      } else {
+        setAllModels([]); // Reset models if selected brand not found
+      }
+      // console.log("Selected brand models", selectedBrand.models);
     }
+    setInputValues({ ...inputValues, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    // console.log(inputValues);
     try {
-      const formData = new FormData();
-      formData.append("brand_model_name", inputValues.brand_model_name);
-      formData.append("brand_id", inputValues.brand_id);
-      formData.append("production_years", inputValues.production_years);
-      formData.append("brand_model_image", inputValues.brand_model_image);
-      formData.append("id", carModel.id);
-
-      try {
-        const response = await axiosInstance.put(
-          "/car_model/update",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-        notify(response.data.message, "success");
-        setLoading(false);
-        userRefresh(true);
-        dismissButtonRef.current.click();
-      } catch (error) {
-        console.log("Error creating new model", error);
-      }
+      const response = await axiosInstance.put(
+        `/car_trim/update/${carTrim.id}`,
+        inputValues
+      );
+      notify(response.data.message, "success");
+      setLoading(false);
+      userRefresh(true);
+      dismissButtonRef.current.click();
     } catch (error) {
-      console.log("Error creating new model", error);
+      console.log("Error adding new trim", error);
     }
   };
+  
   const notify = (message, type) => {
     if (type === "success") {
       toast.success(message, {
@@ -103,9 +112,9 @@ function EditCarModel({ carModel, userRefresh, showModal }) {
     <>
       <div
         className="modal fade fadeInRight"
-        id="editCarModelModal"
+        id="editCarTrimModal"
         tabIndex="-1"
-        aria-labelledby="editCarModelModalLabel"
+        aria-labelledby="editCarTrimModalLabel"
         aria-modal="true"
       >
         <div className="modal-dialog modal-dialog-centered">
@@ -113,8 +122,8 @@ function EditCarModel({ carModel, userRefresh, showModal }) {
             {showModal && (
               <>
                 <div className="modal-header">
-                  <h5 className="modal-title" id="editCarModelModalLabel">
-                    Edit Model - {carModel.brand_model_name}
+                  <h5 className="modal-title" id="editCarTrimModalLabel">
+                    Edit Trim - {carTrim.trim_name}
                   </h5>
                   <button
                     type="button"
@@ -128,15 +137,15 @@ function EditCarModel({ carModel, userRefresh, showModal }) {
                     <div className="row g-3">
                       <div className="col-xxl-6">
                         <div>
-                          <label htmlFor="brand_id" className="form-label">
+                          <label htmlFor="car_brand_id" className="form-label">
                             Brand Name
                           </label>
                           <select
-                            name="brand_id"
-                            id="brand_id"
                             className="form-control"
-                            value={inputValues.brand_id}
+                            name="car_brand_id"
+                            id="car_brand_id"
                             onChange={handleInputChange}
+                            value={inputValues.car_brand_id}
                           >
                             <option>Select brand</option>
                             {allBrands.length > 0 &&
@@ -150,59 +159,84 @@ function EditCarModel({ carModel, userRefresh, showModal }) {
                       </div>
                       <div className="col-xxl-6">
                         <div>
-                          <label
-                            htmlFor="brand_model_name"
-                            className="form-label"
-                          >
+                          <label htmlFor="car_model_id" className="form-label">
                             Model Name
                           </label>
-                          <input
-                            type="text"
+                          <select
                             className="form-control"
-                            id="brand_model_name"
-                            placeholder="Enter Brand Name"
-                            name="brand_model_name"
-                            value={inputValues.brand_model_name}
+                            name="car_model_id"
+                            id="car_model_id"
                             onChange={handleInputChange}
-                          />
-                        </div>
-                      </div>
-                      <div className="col-xxl-6">
-                        <div>
-                          <label
-                            htmlFor="production_years"
-                            className="form-label"
+                            value={inputValues.car_model_id}
                           >
-                            Production Years
+                            <option value={allModels.id}>
+                              {allModels.brand_model_name}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      <div className="col-xxl-6">
+                        <div>
+                          <label htmlFor="trim_name" className="form-label">
+                            Trim Name
                           </label>
                           <input
                             type="text"
                             className="form-control"
-                            id="production_years"
-                            placeholder="2001 - 2005"
-                            name="production_years"
-                            value={inputValues.production_years}
+                            id="trim_name"
+                            placeholder="Trim name"
+                            name="trim_name"
+                            value={inputValues.trim_name}
                             onChange={handleInputChange}
                           />
                         </div>
                       </div>
                       <div className="col-xxl-6">
                         <div>
-                          <label htmlFor="formFile" className="form-label">
-                            Upload Model Image
+                          <label htmlFor="engine" className="form-label">
+                            Trim Engine CC
                           </label>
                           <input
+                            type="text"
                             className="form-control"
-                            type="file"
-                            id="formFile"
-                            name="brand_model_image"
+                            id="engine"
+                            placeholder="Trim engine cc"
+                            name="engine"
+                            value={inputValues.engine}
                             onChange={handleInputChange}
                           />
-                          <img
-                            src={`${imageBaseUrl}${carModel.brand_model_image}`}
-                            width={""}
-                            style={{ paddingTop: "10px", width: "50px" }}
-                          ></img>
+                        </div>
+                      </div>
+                      <div className="col-xxl-6">
+                        <div>
+                          <label htmlFor="trim_hp" className="form-label">
+                            Trim Horse Power
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="trim_hp"
+                            placeholder="Trim Horse Power"
+                            name="trim_hp"
+                            value={inputValues.trim_hp}
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                      </div>
+                      <div className="col-xxl-6">
+                        <div>
+                          <label htmlFor="curb_weight" className="form-label">
+                            Trim Curb Weight
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="curb_weight"
+                            placeholder="Trim curb weight"
+                            name="curb_weight"
+                            value={inputValues.curb_weight}
+                            onChange={handleInputChange}
+                          />
                         </div>
                       </div>
                       <div className="col-lg-12">
@@ -229,7 +263,7 @@ function EditCarModel({ carModel, userRefresh, showModal }) {
                                 data-testid="loader"
                               />
                             ) : (
-                              "Save Car Model"
+                              "Save new trim"
                             )}
                           </button>
                         </div>
@@ -246,4 +280,4 @@ function EditCarModel({ carModel, userRefresh, showModal }) {
   );
 }
 
-export default EditCarModel;
+export default EditCarTrim;

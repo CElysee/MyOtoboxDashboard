@@ -53,7 +53,7 @@ function AddNewModel({ userRefresh }) {
       formData.append("brand_id", inputValues.brand_id);
       formData.append("production_years", inputValues.production_years);
       formData.append("brand_model_image", inputValues.brand_model_image);
-      console.log(...formData.entries());
+      // console.log(...formData.entries());
       try {
         const response = await axiosInstance.post(
           "/car_model/create",

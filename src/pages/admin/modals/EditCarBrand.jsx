@@ -115,7 +115,7 @@ function EditCarBrand({ userRefresh, brand, showModal }) {
               <>
                 <div className="modal-header">
                   <h5 className="modal-title" id="editCarBrandModalLabel">
-                    Edit - {brand.name}
+                    Edit Brand- {brand.name}
                   </h5>
                   <button
                     type="button"

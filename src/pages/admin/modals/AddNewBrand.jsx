@@ -184,7 +184,7 @@ function AddNewBrand({ userRefresh }) {
                             data-testid="loader"
                           />
                         ) : (
-                          "Save"
+                          "Save new brand"
                         )}
                       </button>
                     </div>
