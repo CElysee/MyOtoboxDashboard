@@ -5,6 +5,7 @@ import RiseLoader from "react-spinners/RiseLoader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Editor } from "@tinymce/tinymce-react";
+import Select from "react-select";
 
 const override = {
   display: "block",
@@ -12,14 +13,16 @@ const override = {
   borderColor: "#e55812",
   paddingRight: "10px",
 };
-function AddNewCar() {
-  const [images, setImages] = useState([]);
+function AddNewCar({ userRefresh }) {
+  const [car_images, setCarImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [carData, setCarData] = useState({});
   const [color, setColor] = useState("#fff");
   const [allBrands, setAllBrands] = useState([]);
   const [allModels, setAllModels] = useState([]);
+  const dismissButtonRef = useRef();
   const [allTrims, setAllTrims] = useState([]);
+  const [allStandardFeatures, setAllStandardFeatures] = useState([]);
   const editorRef = useRef(null);
   const tinymce = import.meta.env.VITE_TINYMCE_API;
 
@@ -31,7 +34,6 @@ function AddNewCar() {
     car_year: "",
     car_mileage: "",
     car_price: "",
-    car_currency: "",
     car_location: "",
     car_exterior_color: "",
     car_interior_color: "",
@@ -45,31 +47,12 @@ function AddNewCar() {
     car_registration_number: "",
     car_insurance: "",
     car_control_technique: "",
-    car_user_type: "",
-    car_accident_history: "",
-    car_status: "",
-    featured: "",
     seller_note: "",
     cover_image: "",
     seller_type: "",
     seller_phone_number: "",
     seller_email: "",
-    seller_address: "",
-  });
-
-  const onDrop = useCallback((acceptedFiles) => {
-    // Handle dropped files here
-    setImages((prevImages) => [...prevImages, ...acceptedFiles]);
-  }, []);
-
-  const removeImage = (indexToRemove) => {
-    setImages((prevImages) =>
-      prevImages.filter((image, index) => index !== indexToRemove)
-    );
-  };
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    multiple: true,
+    car_standard_features_id: [],
   });
 
   useEffect(() => {
@@ -80,6 +63,7 @@ function AddNewCar() {
         );
         setAllBrands(brand_response.data.car_brand);
         setCarData(brand_response.data.car_brand);
+        setAllStandardFeatures(brand_response.data.car_standard_features);
       } catch (error) {
         console.log("Error fetching data", error);
       }
@@ -87,6 +71,10 @@ function AddNewCar() {
     fetchData();
   }, []);
 
+  const standaFeaturesOptions = allStandardFeatures.map((feature) => ({
+    value: feature.id,
+    label: feature.feature_name,
+  }));
   // console.log(allBrands);
 
   const handleInputChange = (e) => {
@@ -105,14 +93,127 @@ function AddNewCar() {
       const selectTrims = selectedModel.trims;
       setAllTrims(selectTrims);
     }
-    setInputValues({ ...inputValues, [name]: value });
+    if (name === "cover_image") {
+      const selectedImage = e.target.files[0];
+      setInputValues({ ...inputValues, cover_image: selectedImage });
+      // console.log(inputValues.cover_image);
+    } else {
+      setInputValues({ ...inputValues, [name]: value });
+    }
   };
-  // console.log(carData);
+
+  const handleStandardFeatureChange = (selectedOptions) => {
+    const selectedFeatures = selectedOptions.map((option) => option.value);
+    setInputValues({
+      ...inputValues,
+      car_standard_features_id: selectedFeatures,
+    });
+  };
+
+  const handleEditorChange = (content, editor) => {
+    // Update the content state whenever the editor content changes
+    setInputValues((prevValues) => ({
+      ...prevValues,
+      seller_note: content,
+    }));
+  };
+
+  const onDrop = useCallback((acceptedFiles) => {
+    // Handle dropped files here
+    // setCarImages((prevImages) => [...prevImages, ...acceptedFiles]);
+    setCarImages([...car_images, ...acceptedFiles]);
+  }, []);
+
+  const removeImage = (indexToRemove) => {
+    setCarImages((prevImages) =>
+      prevImages.filter((image, index) => index !== indexToRemove)
+    );
+  };
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    multiple: true,
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(inputValues);
-  }
+    setLoading(true);
+    // console.log(inputValues);
+    // console.log(car_images);
+    try {
+      const formData = new FormData();
+      formData.append("user_id", "1");
+      formData.append("car_name_info", inputValues.car_name_info);
+      formData.append("car_brand_id", inputValues.car_brand_id);
+      formData.append("car_model_id", inputValues.car_model_id);
+      formData.append("car_trim_id", inputValues.car_trim_id);
+      formData.append("car_year", inputValues.car_year);
+      formData.append("car_mileage", inputValues.car_mileage);
+      formData.append("car_price", inputValues.car_price);
+      formData.append("car_vin_number", inputValues.car_vin_number);
+      formData.append("car_transmission", inputValues.car_transmission);
+      formData.append("car_drive_train", inputValues.car_drive_train);
+      formData.append("car_fuel_type", inputValues.car_fuel_type);
+      formData.append("car_fuel_consumption", inputValues.car_fuel_consumption);
+      formData.append("car_engine_capacity", inputValues.car_engine_capacity);
+      formData.append("car_fuel_consumption", inputValues.car_fuel_consumption);
+      formData.append("car_exterior_color", inputValues.car_exterior_color);
+      formData.append("car_interior_color", inputValues.car_interior_color);
+      formData.append("car_body_type", inputValues.car_body_type);
+      formData.append("car_location", inputValues.car_location);
+      formData.append(
+        "car_registration_number",
+        inputValues.car_registration_number
+      );
+      formData.append("car_insurance", inputValues.car_insurance);
+      formData.append(
+        "car_control_technique",
+        inputValues.car_control_technique
+      );
+      formData.append("seller_phone_number", inputValues.seller_phone_number);
+      formData.append("seller_email", inputValues.seller_email);
+      formData.append("seller_note", inputValues.seller_note);
+      formData.append("cover_image", inputValues.cover_image);
+      formData.append(
+        "car_standard_features",
+        inputValues.car_standard_features_id
+      );
+      car_images.forEach((file) => {
+        formData.append("car_images", file); // Make sure 'file' is an UploadFile object
+      });
+      // formData.append("car_images", car_images);
+
+      // console.log(...formData.entries());
+      const response = await axiosInstance.post(
+        "/car_for_sale/create",
+        formData,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("Submission successful:", response.data);
+      notify(response.data.message, "success");
+      setLoading(false);
+      userRefresh(true);
+      dismissButtonRef.current.click();
+    } catch (error) {
+      console.log("Error adding new car", error);
+    }
+  };
+  const notify = (message, type) => {
+    if (type === "success") {
+      toast.success(message, {
+        icon: "👏",
+      });
+    } else if (type === "error") {
+      toast.error(message, {
+        icon: "😬",
+      });
+    }
+  };
+  // console.log(car_images);
   return (
     <>
       <div
@@ -331,17 +432,16 @@ function AddNewCar() {
                   </div>
                   <div className="col-lg-6">
                     <div>
-                      <label
-                        htmlFor="FuelType"
-                        className="form-label"
+                      <label htmlFor="car_fuel_type" className="form-label">
+                        Fuel type
+                      </label>
+                      <select
+                        className="form-control"
                         name="car_fuel_type"
                         id="car_fuel_type"
                         onChange={handleInputChange}
                         required
                       >
-                        Fuel type
-                      </label>
-                      <select className="form-control">
                         <option>Select fuel type</option>
                         <option>Petrol</option>
                         <option>Diesel</option>
@@ -406,7 +506,6 @@ function AddNewCar() {
                         name="car_interior_color"
                         value={inputValues.car_interior_color}
                         onChange={handleInputChange}
-                        
                       />
                     </div>
                   </div>
@@ -426,7 +525,6 @@ function AddNewCar() {
                         name="car_exterior_color"
                         value={inputValues.car_exterior_color}
                         onChange={handleInputChange}
-                        
                       />
                     </div>
                   </div>
@@ -485,7 +583,7 @@ function AddNewCar() {
                         type="text"
                         className="form-control"
                         id="car_registration_number"
-                        placeholder="KK 215st, Kicukiro"
+                        placeholder="RAG400D"
                         name="car_registration_number"
                         value={inputValues.car_registration_number}
                         onChange={handleInputChange}
@@ -524,7 +622,7 @@ function AddNewCar() {
                         id="car_control_technique"
                         placeholder="31/10/2024"
                         name="car_control_technique"
-                        value={inputValues.car_insurance}
+                        value={inputValues.car_control_technique}
                         onChange={handleInputChange}
                         required
                       />
@@ -559,7 +657,7 @@ function AddNewCar() {
                         Seller Email
                       </label>
                       <input
-                        type="number"
+                        type="email"
                         className="form-control"
                         id="seller_email"
                         placeholder="email@myotobox.rw"
@@ -569,12 +667,30 @@ function AddNewCar() {
                       />
                     </div>
                   </div>
+                  <div className="col-lg-6">
+                    <div>
+                      <label
+                        htmlFor="seller_phone_number"
+                        className="form-label"
+                      >
+                        Cover Image
+                      </label>
+                      <input
+                        type="file"
+                        className="form-control"
+                        id="cover_image"
+                        name="cover_image"
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                  </div>
+
                   <div className="col-lg-12">
                     <Editor
                       apiKey="xnd39f6aiczpogl36kpm15h9cmzy7n4rs3ds86q3jyyu9wm9"
                       onInit={(evt, editor) => (editorRef.current = editor)}
-                      value={inputValues.seller_note}
-                      onChange={handleInputChange}
+                      name="seller_note"
+                      onEditorChange={handleEditorChange}
                       init={{
                         height: 200,
                         menubar: false,
@@ -594,6 +710,28 @@ function AddNewCar() {
                     />
                   </div>
                   <div className="col-lg-12">
+                    <div>
+                      <label
+                        htmlFor="seller_phone_number"
+                        className="form-label"
+                      >
+                        Standard features
+                      </label>
+                      <Select
+                        name="industry"
+                        isMulti
+                        options={standaFeaturesOptions}
+                        value={standaFeaturesOptions.filter((option) =>
+                          inputValues.car_standard_features_id.includes(
+                            option.value
+                          )
+                        )}
+                        onChange={handleStandardFeatureChange}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="col-lg-12">
                     <div className="dropzone">
                       <div {...getRootProps()} className="dropzone-inner">
                         <input {...getInputProps()} />
@@ -606,7 +744,7 @@ function AddNewCar() {
                         </div>
                       </div>
                       <div className="image-preview">
-                        {images.map((image, index) => (
+                        {car_images.map((image, index) => (
                           <div key={index} className="image-item">
                             <img
                               src={URL.createObjectURL(image)}
@@ -623,6 +761,7 @@ function AddNewCar() {
                   <div className="col-lg-12">
                     <div className="hstack gap-2 justify-content-end">
                       <button
+                        ref={dismissButtonRef}
                         type="button"
                         className="btn btn-dark"
                         data-bs-dismiss="modal"
