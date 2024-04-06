@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useRef,
+  useMemo,
+} from "react";
 import { useDropzone } from "react-dropzone";
 import axiosInstance from "../../../utils/axiosInstance";
 import RiseLoader from "react-spinners/RiseLoader";
@@ -15,6 +21,8 @@ const override = {
 };
 function AddNewCar({ userRefresh, car, showModal }) {
   const [car_images, setCarImages] = useState([]);
+  const [cover_image, setCoverImage] = useState("");
+  const [addedCarImages, setAddedCarImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [carData, setCarData] = useState({});
   const [color, setColor] = useState("#fff");
@@ -23,8 +31,11 @@ function AddNewCar({ userRefresh, car, showModal }) {
   const dismissButtonRef = useRef();
   const [allTrims, setAllTrims] = useState([]);
   const [allStandardFeatures, setAllStandardFeatures] = useState([]);
+  const [selectedFeatures, setSelectedFeatures] = useState([]);
+  const [addedFeatures, setAddedFeatures] = useState([]);
   const editorRef = useRef(null);
   const tinymce = import.meta.env.VITE_TINYMCE_API;
+  const imageBaseUrl = import.meta.env.VITE_REACT_APP_API;
 
   const [inputValues, setInputValues] = useState({
     car_name_info: "",
@@ -55,35 +66,12 @@ function AddNewCar({ userRefresh, car, showModal }) {
     car_standard_features_id: [],
   });
 
-  useEffect(() => {
-    if (showModal === true) {
-      setInputValues((prevInputValues) => ({
-        ...prevInputValues,
-        car_name_info: car.car_name_info || "",
-        car_model_id: car.car_model_id || "",
-        car_trim_id: car.car_trim_id || "",
-        car_year: car.car_year || "",
-        car_mileage: car.car_mileage || "",
-        car_price: car.car_price || "",
-        car_location: car.car_location || "",
-        car_exterior_color: car.car_exterior_color || "",
-        car_interior_color: car.car_interior_color || "",
-        car_fuel_type: car.car_fuel_type || "",
-        car_transmission: car.car_transmission || "",
-        car_engine_capacity: car.car_engine_capacity || "",
-        car_fuel_consumption: car.car_fuel_consumption || "",
-        car_drive_train: car.car_drive_train || "",
-        car_body_type: car.car_body_type || "",
-        car_vin_number: car.car_vin_number || "",
-        car_registration_number: car.car_registration_number || "",
-        car_insurance: car.car_insurance || "",
-        car_control_technique: car.car_control_technique || "",
-        seller_note: car.seller_note || "",
-        cover_image: car.cover_image || "",
-        seller_type: car.seller_type || "",
-        seller_phone_number: car.seller_phone_number || "",
-        seller_email: car.seller_email || "",
-        car_standard_features_id: car.car_standard_features_id || "",
+  // Include 'features' in the dependencies array
+  const savedFeatures = useMemo(() => {
+    if (showModal) {
+      return car.features.map((feature) => ({
+        value: feature.id,
+        label: feature.feature_name,
       }));
     }
   }, [car]);
@@ -104,11 +92,58 @@ function AddNewCar({ userRefresh, car, showModal }) {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (showModal === true) {
+      // console.log(car);
+      // console.log("Car data", inputValues);
+      setInputValues((prevInputValues) => ({
+        ...prevInputValues,
+        car_name_info: car.car_name_info || "",
+        car_brand_id: car.car_brand_id || "",
+        car_model_id: car.car_model_id || "",
+        car_trim_id: car.car_trim_id || "",
+        car_year: car.car_year || "",
+        car_mileage: car.car_mileage || "",
+        car_price: car.car_price || "",
+        car_location: car.car_location || "",
+        car_exterior_color: car.car_exterior_color || "",
+        car_interior_color: car.car_interior_color || "",
+        car_fuel_type: car.car_fuel_type || "",
+        car_transmission: car.car_transmission || "",
+        car_engine_capacity: car.car_engine_capacity || "",
+        car_fuel_consumption: car.car_fuel_consumption || "",
+        car_drive_train: car.car_drive_train || "",
+        car_body_type: car.car_body_type || "",
+        car_vin_number: car.car_vin_number || "",
+        car_registration_number: car.car_registration_number || "",
+        car_insurance: car.car_insurance || "",
+        car_control_technique: car.car_control_technique || "",
+        seller_note: car.seller_note || "",
+        // cover_image: car.cover_image || "",
+        seller_type: car.seller_type || "",
+        seller_phone_number: car.seller_phone_number || "",
+        seller_email: car.seller_email || "",
+        car_standard_features_id: car.features_ids || "",
+      }));
+      const selectedBrand = allBrands.filter(
+        (brand) => brand.id === Number(car.car_brand_id)
+      )[0];
+      const selectModels = selectedBrand.models;
+      setAllModels(selectModels);
+      const selectTrims = selectModels.filter(
+        (model) => model.id === Number(car.car_model_id)
+      )[0].trims;
+      setAllTrims(selectTrims);
+      setAddedCarImages(car.car_images);
+      setAddedFeatures(savedFeatures);
+      setCoverImage(car.cover_image);
+    }
+  }, [car]);
+
   const standaFeaturesOptions = allStandardFeatures.map((feature) => ({
     value: feature.id,
     label: feature.feature_name,
   }));
-  // console.log(allBrands);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -136,6 +171,7 @@ function AddNewCar({ userRefresh, car, showModal }) {
   };
 
   const handleStandardFeatureChange = (selectedOptions) => {
+    setAddedFeatures(selectedOptions);
     const selectedFeatures = selectedOptions.map((option) => option.value);
     setInputValues({
       ...inputValues,
@@ -175,6 +211,7 @@ function AddNewCar({ userRefresh, car, showModal }) {
     try {
       const formData = new FormData();
       formData.append("user_id", "1");
+      formData.append("car_id", car.id);
       formData.append("car_name_info", inputValues.car_name_info);
       formData.append("car_brand_id", inputValues.car_brand_id);
       formData.append("car_model_id", inputValues.car_model_id);
@@ -201,6 +238,8 @@ function AddNewCar({ userRefresh, car, showModal }) {
       formData.append(
         "car_control_technique",
         inputValues.car_control_technique
+
+
       );
       formData.append("seller_phone_number", inputValues.seller_phone_number);
       formData.append("seller_email", inputValues.seller_email);
@@ -213,11 +252,10 @@ function AddNewCar({ userRefresh, car, showModal }) {
       car_images.forEach((file) => {
         formData.append("car_images", file); // Make sure 'file' is an UploadFile object
       });
-      // formData.append("car_images", car_images);
 
       // console.log(...formData.entries());
-      const response = await axiosInstance.post(
-        "/car_for_sale/create",
+      const response = await axiosInstance.put(
+        "/car_for_sale/update",
         formData,
         {
           headers: {
@@ -712,6 +750,13 @@ function AddNewCar({ userRefresh, car, showModal }) {
                           />
                         </div>
                       </div>
+                      <div className="col-lg-6">
+                        <img
+                          src={`${imageBaseUrl}${cover_image}`}
+                          alt="Car Cover Image"
+                          width={"100px"}
+                        ></img>
+                      </div>
 
                       <div className="col-lg-12">
                         <Editor
@@ -750,11 +795,7 @@ function AddNewCar({ userRefresh, car, showModal }) {
                             name="industry"
                             isMulti
                             options={standaFeaturesOptions}
-                            value={standaFeaturesOptions.filter((option) =>
-                              inputValues.car_standard_features_id.includes(
-                                option.value
-                              )
-                            )}
+                            value={addedFeatures}
                             onChange={handleStandardFeatureChange}
                           />
                         </div>
@@ -785,6 +826,22 @@ function AddNewCar({ userRefresh, car, showModal }) {
                             ))}
                           </div>
                         </div>
+                        <div className="added-image-preview">
+                          {addedCarImages.map((image, index) => (
+                            <div key={index} className="added-image-item">
+                              <img
+                                src={`${imageBaseUrl}/CarSellImages/${image.image_name}`}
+                                alt={`Preview ${index}`}
+                              />
+                              <button
+                                className="btn btn-info text-dark"
+                                onClick={() => removeImage(index)}
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                       <div className="col-lg-12">
                         <div className="hstack gap-2 justify-content-end">
@@ -810,7 +867,7 @@ function AddNewCar({ userRefresh, car, showModal }) {
                                 data-testid="loader"
                               />
                             ) : (
-                              "Add new car"
+                              "Update car info"
                             )}
                           </button>
                         </div>
