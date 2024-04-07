@@ -94,7 +94,7 @@ function AddNewCar({ userRefresh, car, showModal }) {
 
   useEffect(() => {
     if (showModal === true) {
-      // console.log(car);
+      console.log(car);
       // console.log("Car data", inputValues);
       setInputValues((prevInputValues) => ({
         ...prevInputValues,
@@ -514,6 +514,7 @@ function AddNewCar({ userRefresh, car, showModal }) {
                             name="car_fuel_type"
                             id="car_fuel_type"
                             onChange={handleInputChange}
+                            value={inputValues.car_fuel_type}
                           >
                             <option>Select fuel type</option>
                             <option>Petrol</option>

@@ -74,6 +74,34 @@ function CarsForSell() {
     setSelectCar(car);
     setShowModal(true);
   };
+
+  const handleCarDelete = async (car_id) => {
+    try {
+      const response = await axiosInstance.delete(
+        `/car_for_sale/delete/${car_id}`
+      );
+      setUserRefresh(true);
+      notify(response.data.message, "success");
+    } catch (error) {
+      console.log("Error deleting car", error);
+      notify("Error deleting car", "danger");
+    }
+  };
+  const formatCurrency = (amountInRwf) => {
+    return new Intl.NumberFormat("en-RW").format(amountInRwf);
+  };
+  const notify = (message, type) => {
+    if (type === "success") {
+      toast.success(message, {
+        icon: "👏",
+      });
+    } else if (type === "error") {
+      toast.error(message, {
+        icon: "😬",
+      });
+    }
+  };
+
   return (
     <div id="layout-wrapper">
       <ToastContainer autoClose={3000} />
@@ -134,7 +162,7 @@ function CarsForSell() {
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                           <span className="counter-value" data-target="559.25">
-                            {dashboardCounts.brand_count}
+                            {dashboardCounts.car_for_sell}
                           </span>
                         </h4>
                       </div>
@@ -168,7 +196,7 @@ function CarsForSell() {
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                           <span className="counter-value" data-target="559.25">
-                            {dashboardCounts.brand_count}
+                            {dashboardCounts.car_sold}
                           </span>
                         </h4>
                       </div>
@@ -322,7 +350,7 @@ function CarsForSell() {
               <div className="col-lg-12">
                 <div className="card">
                   <div className="card-header">
-                    <h5 className="card-title mb-0">Cars 4 Sell</h5>
+                    <h5 className="card-title mb-0">Cars for Sale</h5>
                   </div>
                   <div className="card-body">
                     <table
@@ -333,8 +361,8 @@ function CarsForSell() {
                     >
                       <thead>
                         <tr>
+                          <th>Action</th>
                           <th>Car Info/Name</th>
-                          <th>Manufacture Year</th>
                           <th>Price</th>
                           <th>Kilometers/Mileage</th>
                           <th>Vin/Chassic Number</th>
@@ -346,33 +374,12 @@ function CarsForSell() {
                           <th>Location</th>
                           <th>Trim Image</th>
                           <th>Create Date</th>
-                          <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
                         {allCars.length > 0 &&
                           allCars.map((car, index) => (
                             <tr key={index}>
-                              <td>{car.car_name_info}</td>
-                              <td>{car.car_year}</td>
-                              <td>{car.car_price} Rwf</td>
-                              <td>{car.car_mileage}</td>
-                              <td>{car.car_vin_number}</td>
-                              <td>{car.car_transmission}</td>
-                              <td>{car.car_fuel_type}</td>
-                              <td>{car.car_engine_capacity}</td>
-                              <td>{car.car_interior_color}</td>
-                              <td>{car.car_exterior_color}</td>
-                              <td>{car.car_location}</td>
-                              <td>
-                                <img
-                                  src={`${imageBaseUrl}${car.cover_image}`}
-                                  alt="Car Cover Image"
-                                  width={"50px"}
-                                ></img>
-                              </td>
-
-                              <td>{car.created_at}</td>
                               <td>
                                 <div className="dropdown d-inline-block">
                                   <button
@@ -383,6 +390,7 @@ function CarsForSell() {
                                   >
                                     <i className="ri-more-fill align-middle"></i>
                                   </button>
+
                                   <ul className="dropdown-menu dropdown-menu-end">
                                     <li>
                                       <button
@@ -399,14 +407,41 @@ function CarsForSell() {
                                       </button>
                                     </li>
                                     <li>
-                                      <a className="dropdown-item remove-item-btn">
+                                      <button
+                                        className="dropdown-item remove-item-btn"
+                                        onClick={() => handleCarDelete(car.id)}
+                                      >
                                         <i className="ri-delete-bin-fill align-bottom me-2 text-muted"></i>{" "}
                                         Delete
-                                      </a>
+                                      </button>
                                     </li>
                                   </ul>
                                 </div>
                               </td>
+                              <td>{car.car_name_info}</td>
+                              <td>{formatCurrency(car.car_price)} Rwf</td>
+                              <td>{formatCurrency(car.car_mileage)} kms</td>
+                              <td>{car.car_vin_number}</td>
+                              <td>
+                                {car.car_transmission ==
+                                "Automatic Transmission"
+                                  ? "Auto"
+                                  : "Manul"}
+                              </td>
+                              <td>{car.car_fuel_type}</td>
+                              <td>{car.car_engine_capacity}</td>
+                              <td>{car.car_interior_color}</td>
+                              <td>{car.car_exterior_color}</td>
+                              <td>{car.car_location}</td>
+                              <td>
+                                <img
+                                  src={`${imageBaseUrl}${car.cover_image}`}
+                                  alt="Car Cover Image"
+                                  width={"50px"}
+                                ></img>
+                              </td>
+
+                              <td>{car.created_at}</td>
                             </tr>
                           ))}
                       </tbody>
