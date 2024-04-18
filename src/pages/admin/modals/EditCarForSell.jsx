@@ -64,6 +64,7 @@ function AddNewCar({ userRefresh, car, showModal }) {
     seller_phone_number: "",
     seller_email: "",
     car_standard_features_id: [],
+    car_condition: "",
   });
 
   // Include 'features' in the dependencies array
@@ -124,6 +125,7 @@ function AddNewCar({ userRefresh, car, showModal }) {
         seller_phone_number: car.seller_phone_number || "",
         seller_email: car.seller_email || "",
         car_standard_features_id: car.features_ids || "",
+        car_condition: car.car_condition || "",
       }));
       const selectedBrand = allBrands.filter(
         (brand) => brand.id === Number(car.car_brand_id)
@@ -230,6 +232,7 @@ function AddNewCar({ userRefresh, car, showModal }) {
       formData.append("car_interior_color", inputValues.car_interior_color);
       formData.append("car_body_type", inputValues.car_body_type);
       formData.append("car_location", inputValues.car_location);
+      formData.append("car_condition", inputValues.car_condition);
       formData.append(
         "car_registration_number",
         inputValues.car_registration_number
@@ -238,8 +241,6 @@ function AddNewCar({ userRefresh, car, showModal }) {
       formData.append(
         "car_control_technique",
         inputValues.car_control_technique
-
-
       );
       formData.append("seller_phone_number", inputValues.seller_phone_number);
       formData.append("seller_email", inputValues.seller_email);
@@ -749,6 +750,27 @@ function AddNewCar({ userRefresh, car, showModal }) {
                             name="cover_image"
                             onChange={handleInputChange}
                           />
+                        </div>
+                      </div>
+                      <div className="col-lg-6">
+                        <div>
+                          <label
+                            htmlFor="seller_phone_number"
+                            className="form-label"
+                          >
+                            Car Condition
+                          </label>
+                          <select
+                            className="form-control"
+                            name="car_condition"
+                            id="car_condition"
+                            value={inputValues.car_condition}
+                            onChange={handleInputChange}
+                          >
+                            <option>Select condition</option>
+                            <option>Used</option>
+                            <option>Brand New</option>
+                          </select>
                         </div>
                       </div>
                       <div className="col-lg-6">

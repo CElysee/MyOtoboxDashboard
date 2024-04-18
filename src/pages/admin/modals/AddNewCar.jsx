@@ -53,6 +53,7 @@ function AddNewCar({ userRefresh }) {
     seller_phone_number: "",
     seller_email: "",
     car_standard_features_id: [],
+    car_condition: "",
   });
 
   useEffect(() => {
@@ -173,6 +174,7 @@ function AddNewCar({ userRefresh }) {
       formData.append("seller_email", inputValues.seller_email);
       formData.append("seller_note", inputValues.seller_note);
       formData.append("cover_image", inputValues.cover_image);
+      formData.append("car_condition", inputValues.car_condition);
       formData.append(
         "car_standard_features",
         inputValues.car_standard_features_id
@@ -682,6 +684,28 @@ function AddNewCar({ userRefresh }) {
                         name="cover_image"
                         onChange={handleInputChange}
                       />
+                    </div>
+                  </div>
+                  <div className="col-lg-6">
+                    <div>
+                      <label
+                        htmlFor="seller_phone_number"
+                        className="form-label"
+                      >
+                        Car Condition
+                      </label>
+                      <select
+                        className="form-control"
+                        name="car_condition"
+                        id="car_condition"
+                        value={inputValues.car_condition}
+                        onChange={handleInputChange}
+                        required
+                      >
+                        <option>Select condition</option>
+                        <option>Used</option>
+                        <option>Brand New</option>
+                      </select>
                     </div>
                   </div>
 

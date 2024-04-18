@@ -167,6 +167,13 @@ function SideMenu() {
                     >
                       Standard Features
                     </Link>
+                    <Link
+                      to={"/CarBodyType"}
+                      className="nav-link"
+                      data-key="t-sweet-alerts"
+                    >
+                      Body Type
+                    </Link>
                   </ul>
                 </div>
               </li>
