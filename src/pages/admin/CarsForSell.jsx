@@ -39,7 +39,7 @@ function CarsForSell() {
         setLoading(true);
         const response = await axiosInstance.get("/car_for_sale/car_brands");
         const carlist_response = await axiosInstance.get("/car_for_sale/list");
-        setAllCars(carlist_response.data);
+        setAllCars(carlist_response.data.cars_for_sale);
         setDashboardCounts(response.data.counts);
         setUserRefresh(false);
         setIsLoading(false);

@@ -18,6 +18,7 @@ function AddNewCar({ userRefresh }) {
   const [loading, setLoading] = useState(false);
   const [carData, setCarData] = useState({});
   const [color, setColor] = useState("#fff");
+  const [bodyTypeList, setBodyTypeList] = useState("");
   const [allBrands, setAllBrands] = useState([]);
   const [allModels, setAllModels] = useState([]);
   const dismissButtonRef = useRef();
@@ -54,6 +55,7 @@ function AddNewCar({ userRefresh }) {
     seller_email: "",
     car_standard_features_id: [],
     car_condition: "",
+    car_seller_name: "",
   });
 
   useEffect(() => {
@@ -62,7 +64,11 @@ function AddNewCar({ userRefresh }) {
         const brand_response = await axiosInstance.get(
           "/car_for_sale/car_brands"
         );
+        const body_type_response = await axiosInstance.get(
+          "/car_body_type/list"
+        );
         setAllBrands(brand_response.data.car_brand);
+        setBodyTypeList(body_type_response.data.car_body);
         setCarData(brand_response.data.car_brand);
         setAllStandardFeatures(brand_response.data.car_standard_features);
       } catch (error) {
@@ -71,7 +77,6 @@ function AddNewCar({ userRefresh }) {
     };
     fetchData();
   }, []);
-
   const standaFeaturesOptions = allStandardFeatures.map((feature) => ({
     value: feature.id,
     label: feature.feature_name,
@@ -175,6 +180,7 @@ function AddNewCar({ userRefresh }) {
       formData.append("seller_note", inputValues.seller_note);
       formData.append("cover_image", inputValues.cover_image);
       formData.append("car_condition", inputValues.car_condition);
+      formData.append("car_seller_name", inputValues.car_seller_name);
       formData.append(
         "car_standard_features",
         inputValues.car_standard_features_id
@@ -195,10 +201,40 @@ function AddNewCar({ userRefresh }) {
           },
         }
       );
-      console.log("Submission successful:", response.data);
+      // console.log("Submission successful:", response.data);
       notify(response.data.message, "success");
       setLoading(false);
       userRefresh(true);
+      setInputValues({
+        car_name_info: "",
+        car_brand_id: "",
+        car_model_id: "",
+        car_trim_id: "",
+        car_year: "",
+        car_mileage: "",
+        car_price: "",
+        car_location: "",
+        car_exterior_color: "",
+        car_interior_color: "",
+        car_fuel_type: "",
+        car_transmission: "",
+        car_engine_capacity: "",
+        car_fuel_consumption: "",
+        car_drive_train: "",
+        car_body_type: "",
+        car_vin_number: "",
+        car_registration_number: "",
+        car_insurance: "",
+        car_control_technique: "",
+        seller_note: "",
+        cover_image: "",
+        seller_type: "",
+        seller_phone_number: "",
+        seller_email: "",
+        car_standard_features_id: [],
+        car_condition: "",
+        car_seller_name: "",
+      })
       dismissButtonRef.current.click();
     } catch (error) {
       console.log("Error adding new car", error);
@@ -544,16 +580,9 @@ function AddNewCar({ userRefresh }) {
                         required
                       >
                         <option>Select body type</option>
-                        <option>SUV</option>
-                        <option>Coupe</option>
-                        <option>Sedan</option>
-                        <option>Crossover</option>
-                        <option>Sedan</option>
-                        <option>Hard Top Convertible</option>
-                        <option>Pick Up Truck</option>
-                        <option>Hatchback</option>
-                        <option>Van</option>
-                        <option>Wagon</option>
+                        {bodyTypeList.length > 0 && bodyTypeList.map((body) => (
+                          <option key={body.id} value={bodyTypeList.id}>{body.body_type_name}</option>
+                        ))}
                       </select>
                     </div>
                   </div>
@@ -706,6 +735,26 @@ function AddNewCar({ userRefresh }) {
                         <option>Used</option>
                         <option>Brand New</option>
                       </select>
+                    </div>
+                  </div>
+                  <div className="col-lg-6">
+                    <div>
+                      <label
+                        htmlFor="seller_phone_number"
+                        className="form-label"
+                      >
+                        Seller Name
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="car_seller_name"
+                        placeholder="Akagera Motors or Private Seller"
+                        name="car_seller_name"
+                        value={inputValues.car_seller_name}
+                        onChange={handleInputChange}
+                        required
+                      />
                     </div>
                   </div>
 

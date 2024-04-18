@@ -23,6 +23,7 @@ function AddNewCar({ userRefresh, car, showModal }) {
   const [car_images, setCarImages] = useState([]);
   const [cover_image, setCoverImage] = useState("");
   const [addedCarImages, setAddedCarImages] = useState([]);
+  const [bodyTypeList, setBodyTypeList] = useState("");
   const [loading, setLoading] = useState(false);
   const [carData, setCarData] = useState({});
   const [color, setColor] = useState("#fff");
@@ -65,6 +66,7 @@ function AddNewCar({ userRefresh, car, showModal }) {
     seller_email: "",
     car_standard_features_id: [],
     car_condition: "",
+    car_seller_name: "",
   });
 
   // Include 'features' in the dependencies array
@@ -83,7 +85,11 @@ function AddNewCar({ userRefresh, car, showModal }) {
         const brand_response = await axiosInstance.get(
           "/car_for_sale/car_brands"
         );
+        const body_type_response = await axiosInstance.get(
+          "/car_body_type/list"
+        );
         setAllBrands(brand_response.data.car_brand);
+        setBodyTypeList(body_type_response.data.car_body);
         setCarData(brand_response.data.car_brand);
         setAllStandardFeatures(brand_response.data.car_standard_features);
       } catch (error) {
@@ -126,6 +132,7 @@ function AddNewCar({ userRefresh, car, showModal }) {
         seller_email: car.seller_email || "",
         car_standard_features_id: car.features_ids || "",
         car_condition: car.car_condition || "",
+        car_seller_name: car.car_seller_name || "",
       }));
       const selectedBrand = allBrands.filter(
         (brand) => brand.id === Number(car.car_brand_id)
@@ -233,6 +240,7 @@ function AddNewCar({ userRefresh, car, showModal }) {
       formData.append("car_body_type", inputValues.car_body_type);
       formData.append("car_location", inputValues.car_location);
       formData.append("car_condition", inputValues.car_condition);
+      formData.append("car_seller_name", inputValues.car_seller_name);
       formData.append(
         "car_registration_number",
         inputValues.car_registration_number
@@ -612,18 +620,15 @@ function AddNewCar({ userRefresh, car, showModal }) {
                             id="car_body_type"
                             value={inputValues.car_body_type}
                             onChange={handleInputChange}
+                            required
                           >
                             <option>Select body type</option>
-                            <option>SUV</option>
-                            <option>Coupe</option>
-                            <option>Sedan</option>
-                            <option>Crossover</option>
-                            <option>Sedan</option>
-                            <option>Hard Top Convertible</option>
-                            <option>Pick Up Truck</option>
-                            <option>Hatchback</option>
-                            <option>Van</option>
-                            <option>Wagon</option>
+                            {bodyTypeList.length > 0 &&
+                              bodyTypeList.map((body) => (
+                                <option key={body.id} value={bodyTypeList.id}>
+                                  {body.body_type_name}
+                                </option>
+                              ))}
                           </select>
                         </div>
                       </div>
@@ -780,6 +785,26 @@ function AddNewCar({ userRefresh, car, showModal }) {
                           width={"100px"}
                         ></img>
                       </div>
+                      <div className="col-lg-6">
+                        <div>
+                          <label
+                            htmlFor="seller_phone_number"
+                            className="form-label"
+                          >
+                            Seller Name
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="car_seller_name"
+                            placeholder="Akagera Motors or Private Seller"
+                            name="car_seller_name"
+                            value={inputValues.car_seller_name}
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                      </div>
+                      
 
                       <div className="col-lg-12">
                         <Editor
