@@ -1,7 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser } from "../../features/userSlice";
+import { logout } from "../../features/userSlice";
 
 function TopMenu() {
+  const user = useSelector(selectUser);
+  const user_dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    user_dispatch(logout()); // Remove the empty string from logout
+    navigate("/login");
+  };
   return (
     <header id="page-topbar">
       <div className="layout-width">
@@ -788,58 +800,68 @@ function TopMenu() {
                 aria-expanded="false"
               >
                 <span className="d-flex align-items-center">
-                  <img
-                    className="rounded-circle header-profile-user"
-                    src="/assets/images/users/avatar-1.jpg"
-                    alt="Header Avatar"
-                  />
+                  <svg
+                    width="30px"
+                    height="30px"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M14.9999 15.2547C13.8661 14.4638 12.4872 14 10.9999 14C7.40399 14 4.44136 16.7114 4.04498 20.2013C4.01693 20.4483 4.0029 20.5718 4.05221 20.6911C4.09256 20.7886 4.1799 20.8864 4.2723 20.9375C4.38522 21 4.52346 21 4.79992 21H9.94465M13.9999 19.2857L15.7999 21L19.9999 17M14.9999 7C14.9999 9.20914 13.2091 11 10.9999 11C8.79078 11 6.99992 9.20914 6.99992 7C6.99992 4.79086 8.79078 3 10.9999 3C13.2091 3 14.9999 4.79086 14.9999 7Z"
+                      stroke="#fff"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
                   <span className="text-start ms-xl-2">
                     <span className="d-none d-xl-inline-block ms-1 fw-semibold user-name-text">
-                      Anna Adame
+                      {user.name}
                     </span>
                     <span className="d-none d-xl-block ms-1 fs-13 user-name-sub-text">
-                      Founder
+                    {user.role}
                     </span>
                   </span>
                 </span>
               </button>
               <div className="dropdown-menu dropdown-menu-end">
-                <h6 className="dropdown-header">Welcome Anna!</h6>
-                <a className="dropdown-item" href="pages-profile.html">
+                <h6 className="dropdown-header">Welcome {user.name}!</h6>
+                <a className="dropdown-item" href="#">
                   <i className="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i>{" "}
                   <span className="align-middle">Profile</span>
                 </a>
-                <a className="dropdown-item" href="apps-chat.html">
+                <a className="dropdown-item" href="#">
                   <i className="mdi mdi-message-text-outline text-muted fs-16 align-middle me-1"></i>{" "}
                   <span className="align-middle">Messages</span>
                 </a>
-                <a className="dropdown-item" href="apps-tasks-kanban.html">
+                <a className="dropdown-item" href="#">
                   <i className="mdi mdi-calendar-check-outline text-muted fs-16 align-middle me-1"></i>{" "}
                   <span className="align-middle">Taskboard</span>
                 </a>
-                <a className="dropdown-item" href="pages-faqs.html">
+                <a className="dropdown-item" href="#">
                   <i className="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i>{" "}
                   <span className="align-middle">Help</span>
                 </a>
                 <div className="dropdown-divider"></div>
-                <a className="dropdown-item" href="pages-profile.html">
+                <a className="dropdown-item" href="#">
                   <i className="mdi mdi-wallet text-muted fs-16 align-middle me-1"></i>{" "}
                   <span className="align-middle">
                     Balance : <b>$5971.67</b>
                   </span>
                 </a>
-                <a className="dropdown-item" href="pages-profile-settings.html">
+                <a className="dropdown-item" href="#">
                   <span className="badge bg-success-subtle text-success mt-1 float-end">
                     New
                   </span>
                   <i className="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i>{" "}
                   <span className="align-middle">Settings</span>
                 </a>
-                <a className="dropdown-item" href="auth-lockscreen-basic.html">
+                <a className="dropdown-item" href="#">
                   <i className="mdi mdi-lock text-muted fs-16 align-middle me-1"></i>{" "}
                   <span className="align-middle">Lock screen</span>
                 </a>
-                <a className="dropdown-item" href="auth-logout-basic.html">
+                <a className="dropdown-item" onClick={handleLogout}>
                   <i className="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>{" "}
                   <span className="align-middle" data-key="t-logout">
                     Logout
