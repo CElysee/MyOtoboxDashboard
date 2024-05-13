@@ -419,7 +419,7 @@ function TopMenu() {
                       <div className="text-reset notification-item d-block dropdown-item position-relative">
                         <div className="d-flex">
                           <img
-                            src="assets/images/users/avatar-2.jpg"
+                            src="/assets/images/users/avatar-2.jpg"
                             className="me-3 rounded-circle avatar-xs"
                             alt="user-pic"
                           />
@@ -501,7 +501,7 @@ function TopMenu() {
                       <div className="text-reset notification-item d-block dropdown-item position-relative">
                         <div className="d-flex">
                           <img
-                            src="assets/images/users/avatar-8.jpg"
+                            src="/assets/images/users/avatar-8.jpg"
                             className="me-3 rounded-circle avatar-xs"
                             alt="user-pic"
                           />
@@ -566,7 +566,7 @@ function TopMenu() {
                       <div className="text-reset notification-item d-block dropdown-item">
                         <div className="d-flex">
                           <img
-                            src="assets/images/users/avatar-3.jpg"
+                            src="/assets/images/users/avatar-3.jpg"
                             className="me-3 rounded-circle avatar-xs"
                             alt="user-pic"
                           />
@@ -608,7 +608,7 @@ function TopMenu() {
                       <div className="text-reset notification-item d-block dropdown-item">
                         <div className="d-flex">
                           <img
-                            src="assets/images/users/avatar-2.jpg"
+                            src="/assets/images/users/avatar-2.jpg"
                             className="me-3 rounded-circle avatar-xs"
                             alt="user-pic"
                           />
@@ -651,7 +651,7 @@ function TopMenu() {
                       <div className="text-reset notification-item d-block dropdown-item">
                         <div className="d-flex">
                           <img
-                            src="assets/images/users/avatar-6.jpg"
+                            src="/assets/images/users/avatar-6.jpg"
                             className="me-3 rounded-circle avatar-xs"
                             alt="user-pic"
                           />
@@ -694,7 +694,7 @@ function TopMenu() {
                       <div className="text-reset notification-item d-block dropdown-item">
                         <div className="d-flex">
                           <img
-                            src="assets/images/users/avatar-8.jpg"
+                            src="/assets/images/users/avatar-8.jpg"
                             className="me-3 rounded-circle avatar-xs"
                             alt="user-pic"
                           />
@@ -790,7 +790,7 @@ function TopMenu() {
                 <span className="d-flex align-items-center">
                   <img
                     className="rounded-circle header-profile-user"
-                    src="assets/images/users/avatar-1.jpg"
+                    src="/assets/images/users/avatar-1.jpg"
                     alt="Header Avatar"
                   />
                   <span className="text-start ms-xl-2">

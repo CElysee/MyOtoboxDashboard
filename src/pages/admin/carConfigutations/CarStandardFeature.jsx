@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import TopMenu from "./TopMenu";
-import SideMenu from "./SideMenu";
+import TopMenu from "../TopMenu";
+import SideMenu from "../SideMenu";
 import $ from "jquery"; // Import jQuery
 import "datatables.net"; // Import DataTables library
 import "datatables.net-bs5"; // Import DataTables Bootstrap 5 integration
@@ -12,44 +12,40 @@ import "datatables.net-buttons/js/buttons.colVis.min"; // Column visibility butt
 import "jszip/dist/jszip"; // JSZip for Excel export
 import "datatables.net-buttons/js/buttons.flash.min"; // Flash export (optional)
 import "datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css"; // Buttons Bootstrap 5 CSS
-import AddNewTrim from "./modals/AddNewTrim";
-import EditCarTrim from "./modals/EditCarTrim";
+import AddNewStandardFeature from "../modals/AddNewStandardFeature";
+import EditStandardFeature from "../modals/EditStandardFeature";
 import { useSelector } from "react-redux";
-import axiosInstance from "../../utils/axiosInstance";
+import axiosInstance from "../../../utils/axiosInstance";
 import RiseLoader from "react-spinners/RiseLoader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { all } from "axios";
+import Greetings from "../../../components/greetings/Greetings";
 
-function CarTrims() {
+function CarStandardFeature() {
   const tableRef = useRef(null);
-  const [allTrims, setAllTrims] = useState([]);
+  const [dashboardCounts, setDashboardCounts] = useState("");
+  const [allFeatures, setAllFeatures] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [color, setColor] = useState("#fff");
-  const [countModels, setCountModels] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [userRefresh, setUserRefresh] = useState(false);
-  const [selectCarTrim, setSelectedCarTrim] = useState("");
-  const dismissButtonRef = useRef();
-  const imageBaseUrl = import.meta.env.VITE_REACT_APP_API;
-  const greeting = useSelector((state) => state.greeting);
+  const [selectedFeature, setSelectFeature] = useState("");
 
   useEffect(() => {
-    const fetchAllTrims = async () => {
+    const fetchStandardFeatures = async () => {
       try {
         setLoading(true);
-        const response = await axiosInstance.get("/car_trim/list");
-        setAllTrims(response.data.car_trim);
-        setCountModels(response.data.counts);
-        setIsLoading(false);
+        const res = await axiosInstance.get("/car_standard_features/list");
+        setAllFeatures(res.data.standard_features);
+        setDashboardCounts(res.data.counts);
+        // setIsLoading(false);
         setUserRefresh(false);
       } catch (error) {
         console.log(error);
         setLoading(false);
       }
     };
-    fetchAllTrims();
+    fetchStandardFeatures();
   }, [userRefresh]);
 
   useEffect(() => {
@@ -71,22 +67,23 @@ function CarTrims() {
     };
   }, [isLoading]);
 
-  const handleEditCarTrim = (trim) => {
-    setSelectedCarTrim(trim);
+  const handleSelectedFeature = (feature) => {
+    setSelectFeature(feature);
     setShowModal(true);
   };
 
-  const handleCarTrimDelete = async (id) => {
+  const handleDeleteFeature = async (id) => {
     try {
-      const response = await axiosInstance.delete(`/car_trim/delete/${id}`);
-      if (response.status === 200) {
-        notify("Car trim deleted successfully", "success");
-        setUserRefresh(true);
-      }
+      const response = await axiosInstance.delete(
+        `/car_standard_features/delete/${id}`
+      );
+      setUserRefresh(true);
+      notify(response.data.message, "success");
     } catch (error) {
       notify("Error deleting car trim", "error");
     }
   };
+
   const notify = (message, type) => {
     if (type === "success") {
       toast.success(message, {
@@ -98,46 +95,18 @@ function CarTrims() {
       });
     }
   };
+
   return (
     <div id="layout-wrapper">
-      <ToastContainer autoClose={5000} />
+      <ToastContainer autoClose={3000} />
       <TopMenu />
       <SideMenu />
       <div className="main-content">
         <div className="page-content">
           <div className="container-fluid">
-            <div className="row mb-3 pb-1">
-              <div className="col-12">
-                <div className="d-flex align-items-lg-center flex-lg-row flex-column">
-                  <div className="flex-grow-1">
-                    <h4 className="fs-16 mb-1">
-                      {greeting.greeting_time}, Anna!
-                    </h4>
-                    <p className="text-muted mb-0">
-                      Here's what's happening with your store today.
-                    </p>
-                  </div>
-                  <div className="mt-3 mt-lg-0">
-                    <div className="row g-3 mb-0 align-items-center">
-                      <div className="col-auto">
-                        <button
-                          className="btn btn-soft-info"
-                          type="button"
-                          data-bs-toggle="modal"
-                          data-bs-target="#exampleModalgrid"
-                        >
-                          <i className="ri-add-circle-line align-middle me-1"></i>{" "}
-                          Add New Trim
-                        </button>
-                        <AddNewTrim userRefresh={setUserRefresh} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Greetings />
             <div className="row">
-              <div className="col-xl-4 col-md-6">
+              <div className="col-xl-3 col-md-6">
                 <div className="card card-animate">
                   <div className="card-body">
                     <div className="d-flex align-items-center">
@@ -158,7 +127,7 @@ function CarTrims() {
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                           <span className="counter-value" data-target="559.25">
-                            {countModels.car_brand}
+                            {dashboardCounts.brand_count}
                           </span>
                         </h4>
                       </div>
@@ -172,7 +141,7 @@ function CarTrims() {
                 </div>
               </div>
 
-              <div className="col-xl-4 col-md-6">
+              <div className="col-xl-3 col-md-6">
                 <div className="card card-animate">
                   <div className="card-body">
                     <div className="d-flex align-items-center">
@@ -192,7 +161,7 @@ function CarTrims() {
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                           <span className="counter-value" data-target="36894">
-                            {countModels.car_model}
+                            {dashboardCounts.model_count}
                           </span>
                         </h4>
                       </div>
@@ -206,7 +175,7 @@ function CarTrims() {
                 </div>
               </div>
 
-              <div className="col-xl-4 col-md-6">
+              <div className="col-xl-3 col-md-6">
                 <div className="card card-animate">
                   <div className="card-body">
                     <div className="d-flex align-items-center">
@@ -226,7 +195,7 @@ function CarTrims() {
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                           <span className="counter-value" data-target="183.35">
-                            {countModels.car_trim}
+                            {dashboardCounts.trim_count}
                           </span>
                         </h4>
                       </div>
@@ -239,13 +208,46 @@ function CarTrims() {
                   </div>
                 </div>
               </div>
+              <div className="col-xl-3 col-md-6">
+                <div className="card card-animate">
+                  <div className="card-body">
+                    <div className="d-flex align-items-center">
+                      <div className="flex-grow-1 overflow-hidden">
+                        <p className="text-uppercase fw-medium text-muted text-truncate mb-0">
+                          All Standard Features
+                        </p>
+                      </div>
+                      <div className="flex-shrink-0">
+                        <h5 className="text-success fs-14 mb-0">
+                          <i className="ri-arrow-right-up-line fs-13 align-middle"></i>{" "}
+                          +29.08 %
+                        </h5>
+                      </div>
+                    </div>
+                    <div className="d-flex align-items-end justify-content-between mt-4">
+                      <div>
+                        <h4 className="fs-22 fw-semibold ff-secondary mb-4">
+                          <span className="counter-value" data-target="183.35">
+                            {dashboardCounts.standard_features_count}
+                          </span>
+                        </h4>
+                      </div>
+                      <div className="avatar-sm flex-shrink-0">
+                        <span className="avatar-title bg-primary-subtle rounded fs-3">
+                          <i className="bx bx-user-circle text-primary"></i>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="row">
               <div className="col-lg-12">
                 <div className="card">
                   <div className="card-header">
-                    <h5 className="card-title mb-0">All Trims</h5>
+                    <h5 className="card-title mb-0">All Features</h5>
                   </div>
                   <div className="card-body">
                     <table
@@ -257,26 +259,18 @@ function CarTrims() {
                       <thead>
                         <tr>
                           <th>No</th>
-                          <th>Brand Name</th>
-                          <th>Model Name</th>
-                          <th>Trim Name</th>
-                          <th>Trim Engine CC</th>
-                          <th>Trim Horse Power</th>
+                          <th>Feature Name</th>
                           <th>Create Date</th>
                           <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {allTrims.length > 0 &&
-                          allTrims.map((trim, index) => (
+                        {allFeatures.length > 0 &&
+                          allFeatures.map((feature, index) => (
                             <tr key={index}>
                               <td>{index + 1}</td>
-                              <td>{trim.car_brand_name}</td>
-                              <td>{trim.car_model_name}</td>
-                              <td>{trim.trim_name}</td>
-                              <td>{trim.engine}</td>
-                              <td>{trim.trim_hp} HP</td>
-                              <td>{trim.created_at}</td>
+                              <td>{feature.feature_name}</td>
+                              <td>{feature.created_at}</td>
                               <td>
                                 <div className="dropdown d-inline-block">
                                   <button
@@ -293,8 +287,10 @@ function CarTrims() {
                                         className="dropdown-item edit-item-btn"
                                         type="button"
                                         data-bs-toggle="modal"
-                                        data-bs-target="#editCarTrimModal"
-                                        onClick={() => handleEditCarTrim(trim)}
+                                        data-bs-target="#editCarFeatureModal"
+                                        onClick={() =>
+                                          handleSelectedFeature(feature)
+                                        }
                                       >
                                         <i className="ri-pencil-fill align-bottom me-2 text-muted"></i>{" "}
                                         Edit
@@ -304,7 +300,7 @@ function CarTrims() {
                                       <button
                                         className="dropdown-item remove-item-btn"
                                         onClick={() =>
-                                          handleCarTrimDelete(trim.id)
+                                          handleDeleteFeature(feature.id)
                                         }
                                       >
                                         <i className="ri-delete-bin-fill align-bottom me-2 text-muted"></i>{" "}
@@ -318,10 +314,10 @@ function CarTrims() {
                           ))}
                       </tbody>
                     </table>
-                    <EditCarTrim
+                    <EditStandardFeature
                       userRefresh={setUserRefresh}
                       showModal={showModal}
-                      carTrim={selectCarTrim}
+                      carFeature={selectedFeature}
                     />
                   </div>
                 </div>
@@ -334,4 +330,4 @@ function CarTrims() {
   );
 }
 
-export default CarTrims;
+export default CarStandardFeature;

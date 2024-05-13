@@ -1,16 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
-import TopMenu from "./TopMenu";
-import SideMenu from "./SideMenu";
+import TopMenu from "../TopMenu";
+import SideMenu from "../SideMenu";
 import $ from "jquery"; // Import jQuery
 import "datatables.net"; // Import DataTables library
 import "datatables.net-bs5"; // Import DataTables Bootstrap 5 integration
-import AddNewUser from "./modals/AddNewUser";
-import EditAdminUser from "./modals/EditAdminUser";
-import axiosInstance from "../../utils/axiosInstance";
+import AddNewUser from "../modals/AddNewUser";
+import EditAdminUser from "../modals/EditAdminUser";
+import axiosInstance from "../../../utils/axiosInstance";
 import RiseLoader from "react-spinners/RiseLoader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
+import Greetings from "../../../components/greetings/Greetings";
 
 function AllUsers() {
   const tableRef = useRef(null);
@@ -91,7 +92,7 @@ function AllUsers() {
       });
     }
   };
-  const greeting = useSelector(state => state.greeting);
+  const greeting = useSelector((state) => state.greeting);
   return (
     <div id="layout-wrapper">
       <TopMenu />
@@ -100,18 +101,7 @@ function AllUsers() {
       <div className="main-content">
         <div className="page-content">
           <div className="container-fluid">
-            <div className="row mb-3 pb-1">
-              <div className="col-12">
-                <div className="d-flex align-items-lg-center flex-lg-row flex-column">
-                  <div className="flex-grow-1">
-                    <h4 className="fs-16 mb-1">{greeting.greeting_time}, Anna!</h4>
-                    <p className="text-muted mb-0">
-                      Here's what's happening with your store today.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Greetings />
             <div className="row">
               <div className="col-xl-4 col-md-6">
                 <div className="card card-animate">

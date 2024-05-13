@@ -13,6 +13,7 @@ import "jszip/dist/jszip"; // JSZip for Excel export
 import "datatables.net-buttons/js/buttons.flash.min"; // Flash export (optional)
 import "datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css"; // Buttons Bootstrap 5 CSS
 import AddNewCarRent from "./modals/AddNewCarRent";
+import Greetings from "../../components/greetings/Greetings";
 
 function CarsForRent() {
   const tableRef = useRef(null);
@@ -41,34 +42,7 @@ function CarsForRent() {
       <div className="main-content">
         <div className="page-content">
           <div className="container-fluid">
-            <div className="row mb-3 pb-1">
-              <div className="col-12">
-                <div className="d-flex align-items-lg-center flex-lg-row flex-column">
-                  <div className="flex-grow-1">
-                    <h4 className="fs-16 mb-1">Good Morning, Anna!</h4>
-                    <p className="text-muted mb-0">
-                      Here's what's happening with your store today.
-                    </p>
-                  </div>
-                  <div className="mt-3 mt-lg-0">
-                    <div className="row g-3 mb-0 align-items-center">
-                      <div className="col-auto">
-                        <button
-                          className="btn btn-soft-info"
-                          type="button"
-                          data-bs-toggle="modal"
-                          data-bs-target="#exampleModalgrid"
-                        >
-                          <i className="ri-add-circle-line align-middle me-1"></i>{" "}
-                          Add a New Car
-                        </button>
-                        <AddNewCarRent />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Greetings />
             <div className="row">
               <div className="col-xl-4 col-md-6">
                 <div className="card card-animate">

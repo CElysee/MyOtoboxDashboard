@@ -114,7 +114,7 @@ function AddNewModel({ userRefresh }) {
                   <div className="col-xxl-6">
                     <div>
                       <label htmlFor="brand_id" className="form-label">
-                        Brand Name
+                        Model Name
                       </label>
                       <select
                         name="brand_id"

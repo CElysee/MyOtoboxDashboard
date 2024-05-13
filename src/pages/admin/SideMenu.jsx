@@ -62,18 +62,18 @@ function SideMenu() {
         <div className="navbar-brand-box">
           <Link to={"/AdminDashboard"} className="logo logo-dark">
             <span className="logo-sm">
-              <img src="assets/images/logo-sm.png" alt="" height="22" />
+              <img src="/assets/images/logo-sm.png" alt="" height="22" />
             </span>
             <span className="logo-lg">
-              <img src="assets/images/logo-dark.png" alt="" height="17" />
+              <img src="/assets/images/logo-dark.png" alt="" height="17" />
             </span>
           </Link>
           <Link to={"/AdminDashboard"} className="logo logo-light">
             <span className="logo-sm">
-              <img src="assets/images/logo-sm.png" alt="" height="22" />
+              <img src="/assets/images/logo-sm.png" alt="" height="22" />
             </span>
             <span className="logo-lg">
-              <img src="assets/images/logo-light.png" alt="" height="17" />
+              <img src="/assets/images/logo-light.png" alt="" height="17" />
             </span>
           </Link>
           <button
@@ -92,7 +92,7 @@ function SideMenu() {
                 <span data-key="t-menu">Menu</span>
               </li>
               <li className="nav-item">
-                <Link className="nav-link menu-link" to={"/AdminDashboard"}>
+                <Link className="nav-link menu-link" to={"/admin/dashboard"}>
                   <i className="ri-dashboard-2-line"></i>{" "}
                   <span data-key="t-dashboards">Dashboard</span>
                 </Link>
@@ -103,13 +103,13 @@ function SideMenu() {
                 <span data-key="t-pages">Accounts</span>
               </li>
               <li className="nav-item">
-                <Link className="nav-link menu-link" to={"/AdminUsers"}>
+                <Link className="nav-link menu-link" to={"/admin/users_admin"}>
                   <i className=" ri-user-settings-line"></i>{" "}
                   <span data-key="t-widgets">Admin</span>
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link menu-link" to={"/AllUsers"}>
+                <Link className="nav-link menu-link" to={"/admin/all_users"}>
                   <i className="ri-user-follow-line"></i>{" "}
                   <span data-key="t-widgets">Users</span>
                 </Link>
@@ -135,7 +135,7 @@ function SideMenu() {
                   <ul className="nav nav-sm flex-column">
                     <li className="nav-item">
                       <Link
-                        to={"/CarBrands"}
+                        to={"/admin/car_brands"}
                         className="nav-link"
                         data-key="t-sweet-alerts"
                       >
@@ -144,7 +144,7 @@ function SideMenu() {
                     </li>
                     <li className="nav-item">
                       <Link
-                        to={"/CarModels"}
+                        to={"/admin/car_models"}
                         className="nav-link"
                         data-key="t-sweet-alerts"
                       >
@@ -153,7 +153,7 @@ function SideMenu() {
                     </li>
                     <li className="nav-item">
                       <Link
-                        to={"/CarTrims"}
+                        to={"/admin/car_trims"}
                         className="nav-link"
                         data-key="t-sweet-alerts"
                       >
@@ -161,14 +161,14 @@ function SideMenu() {
                       </Link>
                     </li>
                     <Link
-                      to={"/CarStandardFeature"}
+                      to={"/admin/car_standard_feature"}
                       className="nav-link"
                       data-key="t-sweet-alerts"
                     >
                       Standard Features
                     </Link>
                     <Link
-                      to={"/CarBodyType"}
+                      to={"/admin/car_body_type"}
                       className="nav-link"
                       data-key="t-sweet-alerts"
                     >
@@ -177,24 +177,18 @@ function SideMenu() {
                   </ul>
                 </div>
               </li>
-              <li className="nav-item">
-                <a className="nav-link menu-link" href="widgets.html">
-                  <i className=" ri-calculator-line"></i>{" "}
-                  <span data-key="t-widgets">Tax calculator</span>
-                </a>
-              </li>
               <li className="menu-title">
                 <i className="ri-more-fill"></i>{" "}
                 <span data-key="t-pages">Database</span>
               </li>
               <li className="nav-item">
-                <Link className="nav-link menu-link" to={"/CarsForSell"}>
+                <Link className="nav-link menu-link" to={"/admin/cars_for_sell"}>
                   <i className="ri-police-car-fill"></i>{" "}
                   <span data-key="t-widgets">Cars For Sell </span>
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link menu-link" to={"/CarsForRent"}>
+                <Link className="nav-link menu-link" to={"/admin/cars_for_rent"}>
                   <i className="ri-police-car-fill"></i>{" "}
                   <span data-key="t-widgets">Cars For Rent </span>
                 </Link>
@@ -205,29 +199,22 @@ function SideMenu() {
                 <span data-key="t-components">Transactions</span>
               </li>
               <li className="nav-item">
-                <a className="nav-link menu-link" href="widgets.html">
+                <Link className="nav-link menu-link" to={"/admin/booked_test_drive_sell"}>
                   <i className="ri-police-car-fill"></i>{" "}
-                  <span data-key="t-widgets">Cars For Sell </span>
-                </a>
+                  <span data-key="t-widgets">Booked Test Drive Sell </span>
+                </Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link menu-link" href="widgets.html">
-                  <i className="ri-truck-line"></i>{" "}
-                  <span data-key="t-widgets">Cars For Rent </span>
-                </a>
-              </li>
-
-              <li className="nav-item">
-                <a className="nav-link menu-link" href="widgets.html">
+                <Link className="nav-link menu-link" to={"/admin/tax_calculator"}>
                   <i className=" ri-calculator-line"></i>{" "}
                   <span data-key="t-widgets">Tax calculator</span>
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link menu-link" href="widgets.html">
+                <Link className="nav-link menu-link" to={"/admin/import_on_order"}>
                   <i className="ri-ship-line"></i>{" "}
                   <span data-key="t-widgets">Import on order</span>
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

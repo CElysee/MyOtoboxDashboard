@@ -1,17 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
-import TopMenu from "./TopMenu";
-import SideMenu from "./SideMenu";
+import TopMenu from "../TopMenu";
+import SideMenu from "../SideMenu";
 import $ from "jquery"; // Import jQuery
 import "datatables.net"; // Import DataTables library
 import "datatables.net-bs5"; // Import DataTables Bootstrap 5 integration
 import "datatables.net-bs5/css/dataTables.bootstrap5.min.css"; // Import DataTables Bootstrap 5 CSS
-import AddNewUser from "./modals/AddNewUser";
-import EditAdminUser from "./modals/EditAdminUser";
-import axiosInstance from "../../utils/axiosInstance";
+import AddNewUser from "../modals/AddNewUser";
+import EditAdminUser from "../modals/EditAdminUser";
+import axiosInstance from "../../../utils/axiosInstance";
 import RiseLoader from "react-spinners/RiseLoader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
+import Greetings from "../../../components/greetings/Greetings";
 
 function AdminUsers() {
   const tableRef = useRef(null);
@@ -92,7 +93,7 @@ function AdminUsers() {
       });
     }
   };
-  const greeting = useSelector(state => state.greeting);
+  const greeting = useSelector((state) => state.greeting);
   return (
     <div id="layout-wrapper">
       <TopMenu />
@@ -101,34 +102,7 @@ function AdminUsers() {
       <div className="main-content">
         <div className="page-content">
           <div className="container-fluid">
-            <div className="row mb-3 pb-1">
-              <div className="col-12">
-                <div className="d-flex align-items-lg-center flex-lg-row flex-column">
-                  <div className="flex-grow-1">
-                    <h4 className="fs-16 mb-1">{greeting.greeting_time}, Anna!</h4>
-                    <p className="text-muted mb-0">
-                      Here's what's happening with your store today.
-                    </p>
-                  </div>
-                  <div className="mt-3 mt-lg-0">
-                    <div className="row g-3 mb-0 align-items-center">
-                      <div className="col-auto">
-                        <button
-                          className="btn btn-soft-info"
-                          type="button"
-                          data-bs-toggle="modal"
-                          data-bs-target="#exampleModalgrid"
-                        >
-                          <i className="ri-add-circle-line align-middle me-1"></i>{" "}
-                          Add new user
-                        </button>
-                        <AddNewUser userRefresh={setUserRefresh} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Greetings />
             <div className="row">
               <div className="col-xl-4 col-md-6">
                 <div className="card card-animate">

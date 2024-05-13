@@ -1,15 +1,11 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
-import { selectIsAuthenticated } from "../assets/features/auth/authSlice";
+import { Navigate, Outlet } from "react-router-dom";
+import { selectIsAuthenticated } from "../features/userSlice";
 
-const PrivateRoutes = ({ children }) => {
+const PrivateRoutes = ({ component: component, ...rest }) => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-  return children;
+  return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;
 };
 
-export default PrivateRoutes;
+export default PrivateRoutes; 

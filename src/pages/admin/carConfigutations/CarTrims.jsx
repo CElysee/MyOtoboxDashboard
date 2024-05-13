@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import TopMenu from "./TopMenu";
-import SideMenu from "./SideMenu";
+import TopMenu from "../TopMenu";
+import SideMenu from "../SideMenu";
 import $ from "jquery"; // Import jQuery
 import "datatables.net"; // Import DataTables library
 import "datatables.net-bs5"; // Import DataTables Bootstrap 5 integration
@@ -12,37 +12,45 @@ import "datatables.net-buttons/js/buttons.colVis.min"; // Column visibility butt
 import "jszip/dist/jszip"; // JSZip for Excel export
 import "datatables.net-buttons/js/buttons.flash.min"; // Flash export (optional)
 import "datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css"; // Buttons Bootstrap 5 CSS
-import AddNewBrand from "./modals/AddNewBrand";
-import EditCarBrand from "./modals/EditCarBrand";
+import AddNewTrim from "../modals/AddNewTrim";
+import EditCarTrim from "../modals/EditCarTrim";
 import { useSelector } from "react-redux";
-import axiosInstance from "../../utils/axiosInstance";
+import axiosInstance from "../../../utils/axiosInstance";
 import RiseLoader from "react-spinners/RiseLoader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { all } from "axios";
+import Greetings from "../../../components/greetings/Greetings";
 
-function CarBrands() {
+function CarTrims() {
   const tableRef = useRef(null);
-  const [brandsList, setBrandsList] = useState("");
+  const [allTrims, setAllTrims] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [color, setColor] = useState("#fff");
+  const [countModels, setCountModels] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [userRefresh, setUserRefresh] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [selectCarBrand, setSelectCarBrand] = useState("");
-  const [countsBrands, setCountsBrands] = useState(""); 
-
+  const [userRefresh, setUserRefresh] = useState(false);
+  const [selectCarTrim, setSelectedCarTrim] = useState("");
+  const dismissButtonRef = useRef();
+  const imageBaseUrl = import.meta.env.VITE_REACT_APP_API;
+  const greeting = useSelector((state) => state.greeting);
 
   useEffect(() => {
-    const fetchBrands = async () => {
+    const fetchAllTrims = async () => {
       try {
-        const response = await axiosInstance.get("/car_brand/list");
-        setBrandsList(response.data.car_brand);
-        setCountsBrands(response.data.counts);
-        setUserRefresh(false);
+        setLoading(true);
+        const response = await axiosInstance.get("/car_trim/list");
+        setAllTrims(response.data.car_trim);
+        setCountModels(response.data.counts);
         setIsLoading(false);
+        setUserRefresh(false);
       } catch (error) {
         console.log(error);
+        setLoading(false);
       }
     };
-    fetchBrands();
+    fetchAllTrims();
   }, [userRefresh]);
 
   useEffect(() => {
@@ -64,21 +72,22 @@ function CarBrands() {
     };
   }, [isLoading]);
 
-  const handleEditCarBrand = (brand) => {
-    setSelectCarBrand(brand);
+  const handleEditCarTrim = (trim) => {
+    setSelectedCarTrim(trim);
     setShowModal(true);
   };
 
-  const handleDeleteCarBrand = async (brand_id) => {
+  const handleCarTrimDelete = async (id) => {
     try {
-      const response = await axiosInstance.delete(`/car_brand/delete/${brand_id}`);
-      setUserRefresh(true);
-      notify(response.data.message, "success");
+      const response = await axiosInstance.delete(`/car_trim/delete/${id}`);
+      if (response.status === 200) {
+        notify("Car trim deleted successfully", "success");
+        setUserRefresh(true);
+      }
     } catch (error) {
-      notify(error.data.message, "error");
+      notify("Error deleting car trim", "error");
     }
   };
-
   const notify = (message, type) => {
     if (type === "success") {
       toast.success(message, {
@@ -90,8 +99,6 @@ function CarBrands() {
       });
     }
   };
-  const greeting = useSelector((state) => state.greeting);
-  const imageBaseUrl = import.meta.env.VITE_REACT_APP_API;
   return (
     <div id="layout-wrapper">
       <ToastContainer autoClose={5000} />
@@ -100,36 +107,7 @@ function CarBrands() {
       <div className="main-content">
         <div className="page-content">
           <div className="container-fluid">
-            <div className="row mb-3 pb-1">
-              <div className="col-12">
-                <div className="d-flex align-items-lg-center flex-lg-row flex-column">
-                  <div className="flex-grow-1">
-                    <h4 className="fs-16 mb-1">
-                      {greeting.greeting_time}, Anna!
-                    </h4>
-                    <p className="text-muted mb-0">
-                      Here's what's happening with your store today.
-                    </p>
-                  </div>
-                  <div className="mt-3 mt-lg-0">
-                    <div className="row g-3 mb-0 align-items-center">
-                      <div className="col-auto">
-                        <button
-                          className="btn btn-soft-info"
-                          type="button"
-                          data-bs-toggle="modal"
-                          data-bs-target="#exampleModalgrid"
-                        >
-                          <i className="ri-add-circle-line align-middle me-1"></i>{" "}
-                          Add new brand
-                        </button>
-                        <AddNewBrand userRefresh={setUserRefresh} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Greetings />
             <div className="row">
               <div className="col-xl-4 col-md-6">
                 <div className="card card-animate">
@@ -152,7 +130,7 @@ function CarBrands() {
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                           <span className="counter-value" data-target="559.25">
-                            {countsBrands.car_brand}
+                            {countModels.car_brand}
                           </span>
                         </h4>
                       </div>
@@ -186,12 +164,12 @@ function CarBrands() {
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                           <span className="counter-value" data-target="36894">
-                            {countsBrands.car_model}
+                            {countModels.car_model}
                           </span>
                         </h4>
                       </div>
                       <div className="avatar-sm flex-shrink-0">
-                      <span className="avatar-title bg-info rounded fs-3">
+                        <span className="avatar-title bg-info rounded fs-3">
                           <i className="bx bxs-car-garage text-dark"></i>
                         </span>
                       </div>
@@ -220,12 +198,12 @@ function CarBrands() {
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                           <span className="counter-value" data-target="183.35">
-                            {countsBrands.car_trim}
+                            {countModels.car_trim}
                           </span>
                         </h4>
                       </div>
                       <div className="avatar-sm flex-shrink-0">
-                      <span className="avatar-title bg-info rounded fs-3">
+                        <span className="avatar-title bg-info rounded fs-3">
                           <i className="bx bxs-car-mechanic text-dark"></i>
                         </span>
                       </div>
@@ -239,7 +217,7 @@ function CarBrands() {
               <div className="col-lg-12">
                 <div className="card">
                   <div className="card-header">
-                    <h5 className="card-title mb-0">All Brands</h5>
+                    <h5 className="card-title mb-0">All Trims</h5>
                   </div>
                   <div className="card-body">
                     <table
@@ -252,26 +230,25 @@ function CarBrands() {
                         <tr>
                           <th>No</th>
                           <th>Brand Name</th>
-                          <th>Origin Country</th>
-                          <th>Logo</th>
+                          <th>Model Name</th>
+                          <th>Trim Name</th>
+                          <th>Trim Engine CC</th>
+                          <th>Trim Horse Power</th>
                           <th>Create Date</th>
                           <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {brandsList.length > 0 &&
-                          brandsList.map((brand, index) => (
+                        {allTrims.length > 0 &&
+                          allTrims.map((trim, index) => (
                             <tr key={index}>
                               <td>{index + 1}</td>
-                              <td>{brand.name}</td>
-                              <td>{brand.country_name}</td>
-                              <td>
-                                <img
-                                  src={`${imageBaseUrl}/BrandLogo/${brand.brand_logo}`}
-                                  width={"50px"}
-                                ></img>
-                              </td>
-                              <td>{brand.created_at}</td>
+                              <td>{trim.car_brand_name}</td>
+                              <td>{trim.car_model_name}</td>
+                              <td>{trim.trim_name}</td>
+                              <td>{trim.engine}</td>
+                              <td>{trim.trim_hp} HP</td>
+                              <td>{trim.created_at}</td>
                               <td>
                                 <div className="dropdown d-inline-block">
                                   <button
@@ -288,10 +265,8 @@ function CarBrands() {
                                         className="dropdown-item edit-item-btn"
                                         type="button"
                                         data-bs-toggle="modal"
-                                        data-bs-target="#editCarBrandModal"
-                                        onClick={() =>
-                                          handleEditCarBrand(brand)
-                                        }
+                                        data-bs-target="#editCarTrimModal"
+                                        onClick={() => handleEditCarTrim(trim)}
                                       >
                                         <i className="ri-pencil-fill align-bottom me-2 text-muted"></i>{" "}
                                         Edit
@@ -301,7 +276,7 @@ function CarBrands() {
                                       <button
                                         className="dropdown-item remove-item-btn"
                                         onClick={() =>
-                                          handleDeleteCarBrand(brand.id)
+                                          handleCarTrimDelete(trim.id)
                                         }
                                       >
                                         <i className="ri-delete-bin-fill align-bottom me-2 text-muted"></i>{" "}
@@ -315,10 +290,10 @@ function CarBrands() {
                           ))}
                       </tbody>
                     </table>
-                    <EditCarBrand
+                    <EditCarTrim
                       userRefresh={setUserRefresh}
                       showModal={showModal}
-                      brand={selectCarBrand}
+                      carTrim={selectCarTrim}
                     />
                   </div>
                 </div>
@@ -331,4 +306,4 @@ function CarBrands() {
   );
 }
 
-export default CarBrands;
+export default CarTrims;

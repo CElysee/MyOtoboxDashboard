@@ -20,6 +20,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
+import Greetings from "../../components/greetings/Greetings";
 
 function CarsForSell() {
   const tableRef = useRef(null);
@@ -32,6 +33,7 @@ function CarsForSell() {
   const imageBaseUrl = import.meta.env.VITE_REACT_APP_API;
   const greeting = useSelector((state) => state.greeting);
   const [selectCar, setSelectCar] = useState({});
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -110,36 +112,7 @@ function CarsForSell() {
       <div className="main-content">
         <div className="page-content">
           <div className="container-fluid">
-            <div className="row mb-3 pb-1">
-              <div className="col-12">
-                <div className="d-flex align-items-lg-center flex-lg-row flex-column">
-                  <div className="flex-grow-1">
-                    <h4 className="fs-16 mb-1">
-                      {greeting.greeting_time}, Anna!
-                    </h4>
-                    <p className="text-muted mb-0">
-                      Here's what's happening with your store today.
-                    </p>
-                  </div>
-                  <div className="mt-3 mt-lg-0">
-                    <div className="row g-3 mb-0 align-items-center">
-                      <div className="col-auto">
-                        <button
-                          className="btn btn-soft-info"
-                          type="button"
-                          data-bs-toggle="modal"
-                          data-bs-target="#exampleModalgrid"
-                        >
-                          <i className="ri-add-circle-line align-middle me-1"></i>{" "}
-                          Add a New Car
-                        </button>
-                        <AddNewCar userRefresh={setUserRefresh} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Greetings />
             <div className="row">
               <div className="col-xl-2 col-md-6">
                 <div className="card card-animate">
@@ -362,6 +335,7 @@ function CarsForSell() {
                       <thead>
                         <tr>
                           <th>Action</th>
+                          <th>Stock Number</th>
                           <th>Car Info/Name</th>
                           <th>Price</th>
                           <th>Kilometers/Mileage</th>
@@ -418,6 +392,7 @@ function CarsForSell() {
                                   </ul>
                                 </div>
                               </td>
+                              <td>{car.stock_number}</td>
                               <td>{car.car_name_info}</td>
                               <td>{formatCurrency(car.car_price)} Rwf</td>
                               <td>{formatCurrency(car.car_mileage)} kms</td>

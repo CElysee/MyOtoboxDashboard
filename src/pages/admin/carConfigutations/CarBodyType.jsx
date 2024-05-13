@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import TopMenu from "./TopMenu";
-import SideMenu from "./SideMenu";
+import TopMenu from "../TopMenu";
+import SideMenu from "../SideMenu";
 import $ from "jquery"; // Import jQuery
 import "datatables.net"; // Import DataTables library
 import "datatables.net-bs5"; // Import DataTables Bootstrap 5 integration
@@ -12,41 +12,40 @@ import "datatables.net-buttons/js/buttons.colVis.min"; // Column visibility butt
 import "jszip/dist/jszip"; // JSZip for Excel export
 import "datatables.net-buttons/js/buttons.flash.min"; // Flash export (optional)
 import "datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css"; // Buttons Bootstrap 5 CSS
+import AddCarBodyType from "../modals/AddCarBodyType";
+import EditCarBodyType from "../modals/EditCarBodyType";
 import { useSelector } from "react-redux";
-import AddNewModel from "./modals/AddNewModel";
-import EditCarModel from "./modals/EditCarModel";
-import axiosInstance from "../../utils/axiosInstance";
+import axiosInstance from "../../../utils/axiosInstance";
 import RiseLoader from "react-spinners/RiseLoader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Greetings from "../../../components/greetings/Greetings";
 
-function CarModels() {
+function CarBodyType() {
   const tableRef = useRef(null);
-  const [allModelsList, setModelsList] = useState("");
-  const [countModels, setCountModels] = useState("");
   const [loading, setLoading] = useState(false);
+  const [carBody, setCarBody] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
   const [userRefresh, setUserRefresh] = useState(false);
-  const [selectedCarModel, setSelectedCarModel] = useState("");
-  const greeting = useSelector((state) => state.greeting);
-  const imageBaseUrl = import.meta.env.VITE_REACT_APP_API;
+  const [showModal, setShowModal] = useState(false);
+  const [selectedBody, setSelectedBody] = useState("");
+  const [countsBrands, setCountsBrands] = useState("");
 
   useEffect(() => {
-    const fetchModels = async () => {
+    const fetchBrands = async () => {
       try {
         setLoading(true);
-        const response = await axiosInstance.get("/car_model/list");
-        setModelsList(response.data.car_model);
-        setCountModels(response.data.counts);
-        setIsLoading(false);
+        const response = await axiosInstance.get("/car_body_type/list");
+        setCarBody(response.data.car_body);
+        setCountsBrands(response.data.counts);
         setUserRefresh(false);
+        setIsLoading(false);
       } catch (error) {
-        console.log("Error fetching car models", error);
+        console.log(error);
         setLoading(false);
       }
     };
-    fetchModels();
+    fetchBrands();
   }, [userRefresh]);
 
   useEffect(() => {
@@ -68,18 +67,20 @@ function CarModels() {
     };
   }, [isLoading]);
 
-  const handleEditCarModel = (carModel) => {
-    setSelectedCarModel(carModel);
+  const handleEditCarBody = (list) => {
+    setSelectedBody(list);
     setShowModal(true);
   };
 
-  const handleCarModelDelete = async (id) => {
+  const handleDeleteCarBody = async (brand_id) => {
     try {
-      const response = await axiosInstance.delete(`/car_model/delete/${id}`);
-      setUserRefresh(true)
+      const response = await axiosInstance.delete(
+        `/car_body_type/delete/${brand_id}`
+      );
       notify(response.data.message, "success");
+      setUserRefresh(true);
     } catch (error) {
-      notify("Error deleting car trim", "error");
+      notify(error.data.message, "error");
     }
   };
 
@@ -94,47 +95,18 @@ function CarModels() {
       });
     }
   };
-
+  const imageBaseUrl = import.meta.env.VITE_REACT_APP_API;
   return (
     <div id="layout-wrapper">
-      <ToastContainer autoClose={3000} />
+      <ToastContainer autoClose={5000} />
       <TopMenu />
       <SideMenu />
       <div className="main-content">
         <div className="page-content">
           <div className="container-fluid">
-            <div className="row mb-3 pb-1">
-              <div className="col-12">
-                <div className="d-flex align-items-lg-center flex-lg-row flex-column">
-                  <div className="flex-grow-1">
-                    <h4 className="fs-16 mb-1">
-                      {greeting.greeting_time}, Anna!
-                    </h4>
-                    <p className="text-muted mb-0">
-                      Here's what's happening with your store today.
-                    </p>
-                  </div>
-                  <div className="mt-3 mt-lg-0">
-                    <div className="row g-3 mb-0 align-items-center">
-                      <div className="col-auto">
-                        <button
-                          className="btn btn-soft-info"
-                          type="button"
-                          data-bs-toggle="modal"
-                          data-bs-target="#exampleModalgrid"
-                        >
-                          <i className="ri-add-circle-line align-middle me-1"></i>{" "}
-                          Add new model
-                        </button>
-                        <AddNewModel userRefresh={setUserRefresh} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Greetings />
             <div className="row">
-              <div className="col-xl-4 col-md-6">
+              <div className="col-xl-3 col-md-6">
                 <div className="card card-animate">
                   <div className="card-body">
                     <div className="d-flex align-items-center">
@@ -155,7 +127,7 @@ function CarModels() {
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                           <span className="counter-value" data-target="559.25">
-                            {countModels.car_brand}
+                            {countsBrands.car_brand}
                           </span>
                         </h4>
                       </div>
@@ -169,7 +141,7 @@ function CarModels() {
                 </div>
               </div>
 
-              <div className="col-xl-4 col-md-6">
+              <div className="col-xl-3 col-md-6">
                 <div className="card card-animate">
                   <div className="card-body">
                     <div className="d-flex align-items-center">
@@ -189,7 +161,7 @@ function CarModels() {
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                           <span className="counter-value" data-target="36894">
-                            {countModels.car_model}
+                            {countsBrands.car_model}
                           </span>
                         </h4>
                       </div>
@@ -203,7 +175,7 @@ function CarModels() {
                 </div>
               </div>
 
-              <div className="col-xl-4 col-md-6">
+              <div className="col-xl-3 col-md-6">
                 <div className="card card-animate">
                   <div className="card-body">
                     <div className="d-flex align-items-center">
@@ -223,7 +195,40 @@ function CarModels() {
                       <div>
                         <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                           <span className="counter-value" data-target="183.35">
-                            {countModels.car_trim}
+                            {countsBrands.car_trim}
+                          </span>
+                        </h4>
+                      </div>
+                      <div className="avatar-sm flex-shrink-0">
+                        <span className="avatar-title bg-info rounded fs-3">
+                          <i className="bx bxs-car-mechanic text-dark"></i>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-xl-3 col-md-6">
+                <div className="card card-animate">
+                  <div className="card-body">
+                    <div className="d-flex align-items-center">
+                      <div className="flex-grow-1 overflow-hidden">
+                        <p className="text-uppercase fw-medium text-muted text-truncate mb-0">
+                          All body types
+                        </p>
+                      </div>
+                      <div className="flex-shrink-0">
+                        <h5 className="text-success fs-14 mb-0">
+                          <i className="ri-arrow-right-up-line fs-13 align-middle"></i>{" "}
+                          +29.08 %
+                        </h5>
+                      </div>
+                    </div>
+                    <div className="d-flex align-items-end justify-content-between mt-4">
+                      <div>
+                        <h4 className="fs-22 fw-semibold ff-secondary mb-4">
+                          <span className="counter-value" data-target="183.35">
+                            {countsBrands.car_body_type_count}
                           </span>
                         </h4>
                       </div>
@@ -242,7 +247,7 @@ function CarModels() {
               <div className="col-lg-12">
                 <div className="card">
                   <div className="card-header">
-                    <h5 className="card-title mb-0">All Car Models</h5>
+                    <h5 className="card-title mb-0">Body Types</h5>
                   </div>
                   <div className="card-body">
                     <table
@@ -254,29 +259,25 @@ function CarModels() {
                       <thead>
                         <tr>
                           <th>No</th>
-                          <th>Model Name</th>
-                          <th>Brand Name</th>
-                          <th>Production Years</th>
-                          <th>Model Image</th>
+                          <th>Name</th>
+                          <th>Image</th>
                           <th>Create Date</th>
                           <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {allModelsList.length > 0 &&
-                          allModelsList.map((carModel, index) => (
+                        {carBody.length > 0 &&
+                          carBody.map((list, index) => (
                             <tr key={index}>
                               <td>{index + 1}</td>
-                              <td>{carModel.brand_model_name}</td>
-                              <td>{carModel.brand_name}</td>
-                              <td>{carModel.production_years}</td>
+                              <td>{list.body_type_name}</td>
                               <td>
                                 <img
-                                  src={`${imageBaseUrl}${carModel.brand_model_image}`}
+                                  src={`${imageBaseUrl}/BodyTypeImage/${list.body_type_image}`}
                                   width={"50px"}
                                 ></img>
                               </td>
-                              <td>{carModel.created_at}</td>
+                              <td>{list.created_at}</td>
                               <td>
                                 <div className="dropdown d-inline-block">
                                   <button
@@ -293,10 +294,8 @@ function CarModels() {
                                         className="dropdown-item edit-item-btn"
                                         type="button"
                                         data-bs-toggle="modal"
-                                        data-bs-target="#editCarModelModal"
-                                        onClick={() =>
-                                          handleEditCarModel(carModel)
-                                        }
+                                        data-bs-target="#editBodyType"
+                                        onClick={() => handleEditCarBody(list)}
                                       >
                                         <i className="ri-pencil-fill align-bottom me-2 text-muted"></i>{" "}
                                         Edit
@@ -306,7 +305,7 @@ function CarModels() {
                                       <button
                                         className="dropdown-item remove-item-btn"
                                         onClick={() =>
-                                          handleCarModelDelete(carModel.id)
+                                          handleDeleteCarBody(list.id)
                                         }
                                       >
                                         <i className="ri-delete-bin-fill align-bottom me-2 text-muted"></i>{" "}
@@ -320,10 +319,10 @@ function CarModels() {
                           ))}
                       </tbody>
                     </table>
-                    <EditCarModel
+                    <EditCarBodyType
                       userRefresh={setUserRefresh}
                       showModal={showModal}
-                      carModel={selectedCarModel}
+                      list={selectedBody}
                     />
                   </div>
                 </div>
@@ -336,4 +335,4 @@ function CarModels() {
   );
 }
 
-export default CarModels;
+export default CarBodyType;

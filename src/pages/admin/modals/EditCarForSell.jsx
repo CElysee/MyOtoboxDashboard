@@ -262,7 +262,7 @@ function AddNewCar({ userRefresh, car, showModal }) {
         formData.append("car_images", file); // Make sure 'file' is an UploadFile object
       });
 
-      // console.log(...formData.entries());
+      console.log(...formData.entries());
       const response = await axiosInstance.put(
         "/car_for_sale/update",
         formData,

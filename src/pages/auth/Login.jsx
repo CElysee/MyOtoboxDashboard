@@ -1,11 +1,66 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import RiseLoader from "react-spinners/RiseLoader";
+import axiosInstance from "../../utils/axiosInstance";
+import { login } from "../../features/userSlice";
+import { useDispatch } from "react-redux";
+
+const override = {
+  display: "block",
+  margin: "0 auto",
+  borderColor: "#e55812",
+  paddingRight: "10px",
+};
 
 function Login() {
   const [viewPassword, setViewPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [color, setColor] = useState("#fff");
   const year = new Date().getFullYear();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const togglePassword = () => {
     setViewPassword(!viewPassword);
   };
+  const [inputValues, setInputValues] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setInputValues({ ...inputValues, [name]: value });
+  }
+
+const handleLogin = async (e) => {
+  e.preventDefault();
+  try {
+    setLoading(true);
+    const formData = new FormData();
+    // Append some data to the FormData
+    formData.append("username", inputValues.email);
+    formData.append("password", inputValues.password);
+    const response = await axiosInstance.post("/auth/login", formData, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+    const role = response.data.role;
+    dispatch(login(response.data));
+    switch (role) {
+      case "admin":
+        navigate("/admin/dashboard");
+        break;
+      default:
+        navigate("/");
+    }
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+}
 
   return (
     <>
@@ -122,7 +177,7 @@ function Login() {
                         </div>
 
                         <div className="mt-4">
-                          <form action="index.html">
+                          <form onSubmit={handleLogin}>
                             <div className="mb-3">
                               <label htmlFor="username" className="form-label">
                                 Email
@@ -132,6 +187,10 @@ function Login() {
                                 className="form-control"
                                 id="email"
                                 placeholder="Enter email"
+                                name="email"
+                                value={inputValues.email}
+                                onChange={handleChange}
+                                required
                               />
                             </div>
 
@@ -156,6 +215,10 @@ function Login() {
                                   className="form-control pe-5 password-input"
                                   placeholder="Enter password"
                                   id="password-input"
+                                  name="password"
+                                  value={inputValues.password}
+                                  onChange={handleChange}
+                                  required
                                 />
                                 <button
                                   className="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon"
@@ -188,7 +251,19 @@ function Login() {
                                 className="btn btn-info w-100"
                                 type="submit"
                               >
-                                Sign In
+                                {loading ? (
+                          <RiseLoader
+                            color={color}
+                            loading={loading}
+                            cssOverride={override}
+                            size={10}
+                            aria-label="Loading Spinner"
+                            data-testid="loader"
+                            className="loader"
+                          />
+                        ) : (
+                          " Sign in"
+                        )}
                               </button>
                             </div>
 
