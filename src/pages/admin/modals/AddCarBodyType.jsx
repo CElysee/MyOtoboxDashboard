@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import axiosInstance from "../../../utils/axiosInstance";
+import axiosInstance from "../../../utils/AxiosInstance";
 import RiseLoader from "react-spinners/RiseLoader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -39,12 +39,16 @@ function AddCarBodyType({ userRefresh }) {
       formData.append("body_type_image", inputValues.body_type_image);
 
       console.log(...formData.entries());
-      const response = await axiosInstance.post("/car_body_type/create", formData, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axiosInstance.post(
+        "/car_body_type/create",
+        formData,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       console.log("Submission successful:", response.data);
       // console.log(response.data);
       notify(response.data.message, "success");

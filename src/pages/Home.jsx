@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axiosInstance from "../utils/axiosInstance";
+import axiosInstance from "../utils/AxiosInstance";
 
 function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);

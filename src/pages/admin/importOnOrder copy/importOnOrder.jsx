@@ -13,27 +13,31 @@ import "jszip/dist/jszip"; // JSZip for Excel export
 import "datatables.net-buttons/js/buttons.flash.min"; // Flash export (optional)
 import "datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css"; // Buttons Bootstrap 5 CSS
 import axiosInstance from "../../../utils/AxiosInstance";
-import { formatAmount, formatNumber } from "../../../utils/Helpers";
+import { formatAmount, formatNumber } from "../../../utils/helpers";
 import Greetings from "../../../components/greetings/Greetings";
 import ContentLoader from "react-content-loader";
-import BookedTestDriveSellUpdate from "./BookedTestDriveSellUpdate";
+import ImportOnOrderUpdate from "./ImportOnOrderUpdate";
 
-function BookedTestDriveSell() {
-  const tableRef = useRef(null);
+function ImportOnOrder() {
+  const importOnOrderRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [bookedTestDrive, setBookedTestDrive] = useState([]); // Add this line
+  const [importOnOrder, setImportOnOrder] = useState([]); // Add this line
   const [countBookings, setCountBookings] = useState(0); // Add this line
   const [userRefresh, setUserRefresh] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [selectedBooking, setSelectedBooking] = useState({});
+  const [selectedOrder, setSelectedOrder] = useState({});
+  const [orderNote, setOrderNote] = useState("");
+  const handleOrderNote = (note) => {
+    setOrderNote(note);
+  };
   useEffect(() => {
     const fetchDashboardStats = async () => {
       try {
         const booked_test_drive = await axiosInstance.get(
-          "/book-a-test-drive/list"
+          "/import-on-order/list"
         );
-        setBookedTestDrive(booked_test_drive.data.booked_test_drive);
-        setCountBookings(booked_test_drive.data.count_bookings);
+        setImportOnOrder(booked_test_drive.data.orders);
+        setCountBookings(booked_test_drive.data.count_orders);
         setIsLoading(false);
       } catch (error) {
         console.error(error);
@@ -42,7 +46,7 @@ function BookedTestDriveSell() {
     fetchDashboardStats();
   }, [userRefresh]);
   useEffect(() => {
-    const table = $(tableRef.current).DataTable({
+    const table = $(importOnOrderRef.current).DataTable({
       dom: "lBfrtip", // 'l' for length menu (entries per page dropdown)
       scrollX: true,
       buttons: [
@@ -59,8 +63,8 @@ function BookedTestDriveSell() {
       table.destroy(); // Clean up DataTable when component unmounts
     };
   }, [isLoading]);
-  const handleUpdates = (brand) => {
-    setSelectedBooking(brand);
+  const handleUpdates = (order) => {
+    setSelectedOrder(order);
     setShowModal(true);
   };
   return (
@@ -118,13 +122,9 @@ function BookedTestDriveSell() {
                           <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                             <span
                               className="counter-value"
-                              data-target={
-                                countBookings.count_pending_booked_test_drive
-                              }
+                              data-target={countBookings.count_pending_orders}
                             >
-                              {formatNumber(
-                                countBookings.count_pending_booked_test_drive
-                              )}
+                              {formatNumber(countBookings.count_pending_orders)}
                             </span>
                           </h4>
                         </div>
@@ -159,12 +159,10 @@ function BookedTestDriveSell() {
                           <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                             <span
                               className="counter-value"
-                              data-target={
-                                countBookings.count_approved_booked_test_drive
-                              }
+                              data-target={countBookings.count_approved_orders}
                             >
                               {formatNumber(
-                                countBookings.count_approved_booked_test_drive
+                                countBookings.count_approved_orders
                               )}
                             </span>
                           </h4>
@@ -200,12 +198,10 @@ function BookedTestDriveSell() {
                           <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                             <span
                               className="counter-value"
-                              data-target={
-                                countBookings.count_canceled_booked_test_drive
-                              }
+                              data-target={countBookings.count_canceled_orders}
                             >
                               {formatNumber(
-                                countBookings.count_canceled_booked_test_drive
+                                countBookings.count_canceled_orders
                               )}
                             </span>
                           </h4>
@@ -240,12 +236,10 @@ function BookedTestDriveSell() {
                           <h4 className="fs-22 fw-semibold ff-secondary mb-4">
                             <span
                               className="counter-value"
-                              data-target={
-                                countBookings.count_completed_booked_test_drive
-                              }
+                              data-target={countBookings.count_completed_orders}
                             >
                               {formatNumber(
-                                countBookings.count_completed_booked_test_drive
+                                countBookings.count_completed_orders
                               )}
                             </span>
                           </h4>
@@ -266,12 +260,12 @@ function BookedTestDriveSell() {
                   <div className="card">
                     <div className="card-header">
                       <h5 className="card-title mb-0">
-                        Pending Booked Test Drive
+                        Pending Import On Orders
                       </h5>
                     </div>
                     <div className="card-body">
                       <table
-                        ref={tableRef}
+                        ref={importOnOrderRef}
                         id="scroll-horizontal"
                         className="table nowrap align-middle"
                         style={{ width: "100%" }}
@@ -281,36 +275,58 @@ function BookedTestDriveSell() {
                             <th>No</th>
                             <th>User</th>
                             <th>Car</th>
-                            <th>Stock Number</th>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Phone Number</th>
-                            <th>Location</th>
-                            <th>Booking Status</th>
+                            <th>Budget</th>
+                            <th>Fuel Type</th>
+                            <th>Transmission</th>
+                            <th>Year</th>
+                            <th>Kilometers</th>
+                            <th>Color</th>
+                            <th>Note</th>
+                            <th>Order Status</th>
                             <th>Create Date</th>
                             <th>Action</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {bookedTestDrive.length > 0 &&
-                            bookedTestDrive.map((testDrive, index) => (
+                          {importOnOrder.length > 0 &&
+                            importOnOrder.map((order, index) => (
                               <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>
-                                  {testDrive.user.firstName}{" "}
-                                  {testDrive.user.lastName}
+                                  {order.user.firstName} {order.user.lastName}
                                 </td>
                                 <td>
-                                  {testDrive.car_for_sale.car_year}{" "}
-                                  {testDrive.car_for_sale.car_name_info}
+                                  {order.car_brand.name} -
+                                  {order.car_model.brand_model_name} -{" "}
+                                  {order.car_trim.trim_name}
                                 </td>
-                                <td>#{testDrive.car_for_sale.stock_number}</td>
-                                <td>{testDrive.date}</td>
-                                <td>{testDrive.time}</td>
-                                <td>{testDrive.phone_number}</td>
-                                <td>{testDrive.location_choice}</td>
-                                <td>{testDrive.booking_status}</td>
-                                <td>{testDrive.created_at}</td>
+                                <td>#{order.price_range}</td>
+                                <td>{order.fuel_type}</td>
+                                <td>{order.transmission_type}</td>
+                                <td>
+                                  {order.manufacture_year_from} -{" "}
+                                  {order.manufacture_year_to}{" "}
+                                </td>
+                                <td>
+                                  {order.kilometers_from} -{" "}
+                                  {order.kilometers_to}{" "}
+                                </td>
+                                <td>{order.car_color}</td>
+                                <td>
+                                  <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdrop"
+                                    onClick={() =>
+                                      handleOrderNote(order.order_note)
+                                    }
+                                  >
+                                    View Note
+                                  </button>
+                                </td>
+                                <td>{order.order_status}</td>
+                                <td>{order.created_at}</td>
                                 <td>
                                   <div className="dropdown d-inline-block">
                                     <button
@@ -327,10 +343,8 @@ function BookedTestDriveSell() {
                                           className="dropdown-item edit-item-btn"
                                           type="button"
                                           data-bs-toggle="modal"
-                                          data-bs-target="#updateBookingModal"
-                                          onClick={() =>
-                                            handleUpdates(testDrive)
-                                          }
+                                          data-bs-target="#importOnOrderUpdate"
+                                          onClick={() => handleUpdates(order)}
                                         >
                                           <i className="ri-pencil-fill align-bottom me-2 text-muted"></i>{" "}
                                           Edit
@@ -349,11 +363,62 @@ function BookedTestDriveSell() {
                             ))}
                         </tbody>
                       </table>
-                      <BookedTestDriveSellUpdate
+                      <ImportOnOrderUpdate
                         userRefresh={setUserRefresh}
                         showModal={showModal}
-                        booking={selectedBooking}
+                        order={selectedOrder}
                       />
+
+                      <div
+                        className="modal fade"
+                        id="staticBackdrop"
+                        data-bs-backdrop="static"
+                        data-bs-keyboard="false"
+                        tabIndex="-1"
+                        role="dialog"
+                        aria-labelledby="staticBackdropLabel"
+                        aria-hidden="true"
+                      >
+                        <div
+                          className="modal-dialog modal-dialog-centered"
+                          role="document"
+                        >
+                          <div className="modal-content">
+                            <div className="modal-body text-center p-5">
+                              <lord-icon
+                                src="https://cdn.lordicon.com/lupuorrc.json"
+                                trigger="loop"
+                                colors="primary:#121331,secondary:#08a88a"
+                                style={{ width: "120px", height: "120px" }}
+                              ></lord-icon>
+
+                              <div className="mt-4">
+                                <h4 className="mb-3">Order Note</h4>
+                                <p className="text-muted mb-4">
+                                  {orderNote === "" ? (
+                                    "No note"
+                                  ) : (
+                                    <div
+                                      dangerouslySetInnerHTML={{
+                                        __html: orderNote,
+                                      }}
+                                    />
+                                  )}
+                                </p>
+                                <div className="hstack gap-2 justify-content-center">
+                                  <a
+                                    className="btn btn-link link-success fw-medium"
+                                    data-bs-dismiss="modal"
+                                  >
+                                    <i className="ri-close-line me-1 align-middle"></i>{" "}
+                                    Close
+                                  </a>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -366,4 +431,4 @@ function BookedTestDriveSell() {
   );
 }
 
-export default BookedTestDriveSell;
+export default ImportOnOrder;

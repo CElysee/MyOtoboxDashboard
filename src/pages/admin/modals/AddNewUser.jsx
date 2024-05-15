@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import axiosInstance from "../../../utils/axiosInstance";
+import axiosInstance from "../../../utils/AxiosInstance";
 import RiseLoader from "react-spinners/RiseLoader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -69,7 +69,11 @@ function AddNewUser({ userRefresh }) {
     const postData = async () => {
       console.log("Request Payload:", JSON.stringify(userValues)); // Log the request payload before sending
       try {
-        const response = await axiosInstance.post("/auth/create_admin", userValues, customConfig);
+        const response = await axiosInstance.post(
+          "/auth/create_admin",
+          userValues,
+          customConfig
+        );
         console.log("Response:", response.data);
         notify(response.data.message, "success");
         setLoading(false);
@@ -95,7 +99,7 @@ function AddNewUser({ userRefresh }) {
   };
   return (
     <>
-    <ToastContainer autoClose={false} />
+      <ToastContainer autoClose={false} />
       <div
         className="modal fade fadeInRight"
         id="exampleModalgrid"
@@ -277,7 +281,7 @@ function AddNewUser({ userRefresh }) {
                   <div className="col-lg-12">
                     <div className="hstack gap-2 justify-content-end">
                       <button
-                      ref={dismissButtonRef}
+                        ref={dismissButtonRef}
                         type="button"
                         className="btn btn-dark"
                         data-bs-dismiss="modal"

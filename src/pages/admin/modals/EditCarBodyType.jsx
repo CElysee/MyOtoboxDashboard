@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import axiosInstance from "../../../utils/axiosInstance";
+import axiosInstance from "../../../utils/AxiosInstance";
 import RiseLoader from "react-spinners/RiseLoader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -14,7 +14,7 @@ function AddCarBodyType({ userRefresh, list, showModal }) {
   const [countries, setCountries] = useState("");
   const [loading, setLoading] = useState(false);
   const [color, setColor] = useState("#fff");
-  const [updateImage, setUpdateImage] = useState("")
+  const [updateImage, setUpdateImage] = useState("");
   const dismissButtonRef = useRef();
   const [inputValues, setInputValues] = useState({
     body_type_name: "",
@@ -36,7 +36,7 @@ function AddCarBodyType({ userRefresh, list, showModal }) {
     const { name, value } = e.target;
     if (name === "body_type_image") {
       const selectedFile = e.target.files[0];
-      setUpdateImage(selectedFile)
+      setUpdateImage(selectedFile);
     } else {
       setInputValues({ ...inputValues, [name]: value });
     }
@@ -146,7 +146,7 @@ function AddCarBodyType({ userRefresh, list, showModal }) {
                     <img
                       src={`${imageBaseUrl}/BodyTypeImage/${list.body_type_image}`}
                       width={"50px"}
-                      style={{paddingTop: "10px"}}
+                      style={{ paddingTop: "10px" }}
                     ></img>
                   </div>
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import axiosInstance from "../../../utils/axiosInstance";
+import axiosInstance from "../../../utils/AxiosInstance";
 import RiseLoader from "react-spinners/RiseLoader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -297,10 +297,7 @@ function AddNewUser({ userRefresh, user, showModal }) {
                           </div>
                           <div className="col-xxl-6">
                             <div>
-                              <label
-                                htmlFor="is_active"
-                                className="form-label"
-                              >
+                              <label htmlFor="is_active" className="form-label">
                                 Is Active
                               </label>
                               <select

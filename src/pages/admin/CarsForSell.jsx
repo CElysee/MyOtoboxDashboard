@@ -14,7 +14,7 @@ import "datatables.net-buttons/js/buttons.flash.min"; // Flash export (optional)
 import "datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css"; // Buttons Bootstrap 5 CSS
 import AddNewCar from "./modals/AddNewCar";
 import EditCarForSell from "./modals/EditCarForSell";
-import axiosInstance from "../../utils/axiosInstance";
+import axiosInstance from "../../utils/AxiosInstance";
 import RiseLoader from "react-spinners/RiseLoader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -33,7 +33,6 @@ function CarsForSell() {
   const imageBaseUrl = import.meta.env.VITE_REACT_APP_API;
   const greeting = useSelector((state) => state.greeting);
   const [selectCar, setSelectCar] = useState({});
-
 
   useEffect(() => {
     const fetchData = async () => {

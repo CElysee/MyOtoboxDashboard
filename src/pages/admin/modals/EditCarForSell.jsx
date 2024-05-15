@@ -6,7 +6,7 @@ import React, {
   useMemo,
 } from "react";
 import { useDropzone } from "react-dropzone";
-import axiosInstance from "../../../utils/axiosInstance";
+import axiosInstance from "../../../utils/AxiosInstance";
 import RiseLoader from "react-spinners/RiseLoader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -804,7 +804,6 @@ function AddNewCar({ userRefresh, car, showModal }) {
                           />
                         </div>
                       </div>
-                      
 
                       <div className="col-lg-12">
                         <Editor

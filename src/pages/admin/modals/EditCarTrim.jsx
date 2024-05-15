@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import axiosInstance from "../../../utils/axiosInstance";
+import axiosInstance from "../../../utils/AxiosInstance";
 import RiseLoader from "react-spinners/RiseLoader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -96,7 +96,7 @@ function EditCarTrim({ userRefresh, carTrim, showModal }) {
       console.log("Error adding new trim", error);
     }
   };
-  
+
   const notify = (message, type) => {
     if (type === "success") {
       toast.success(message, {

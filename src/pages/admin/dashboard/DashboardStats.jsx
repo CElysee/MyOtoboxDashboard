@@ -1,7 +1,7 @@
 import React from "react";
-import { formatAmount, formatNumber } from "../../../utils/helpers";
+import { formatAmount, formatNumber } from "../../../utils/Helpers";
 
-function DashboardStats({dashboardStats}) {
+function DashboardStats({ dashboardStats }) {
   return (
     <>
       <div className="row">

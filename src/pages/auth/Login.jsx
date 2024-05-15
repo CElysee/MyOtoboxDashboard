@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import RiseLoader from "react-spinners/RiseLoader";
-import axiosInstance from "../../utils/axiosInstance";
+import axiosInstance from "../../utils/AxiosInstance";
 import { login } from "../../features/userSlice";
 import { useDispatch } from "react-redux";
 
@@ -31,36 +31,36 @@ function Login() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setInputValues({ ...inputValues, [name]: value });
-  }
+  };
 
-const handleLogin = async (e) => {
-  e.preventDefault();
-  try {
-    setLoading(true);
-    const formData = new FormData();
-    // Append some data to the FormData
-    formData.append("username", inputValues.email);
-    formData.append("password", inputValues.password);
-    const response = await axiosInstance.post("/auth/login", formData, {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    });
-    const role = response.data.role;
-    dispatch(login(response.data));
-    switch (role) {
-      case "admin":
-        navigate("/admin/dashboard");
-        break;
-      default:
-        navigate("/");
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const formData = new FormData();
+      // Append some data to the FormData
+      formData.append("username", inputValues.email);
+      formData.append("password", inputValues.password);
+      const response = await axiosInstance.post("/auth/login", formData, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      });
+      const role = response.data.role;
+      dispatch(login(response.data));
+      switch (role) {
+        case "admin":
+          navigate("/admin/dashboard");
+          break;
+        default:
+          navigate("/");
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error(error);
-  } finally {
-    setLoading(false);
-  }
-}
+  };
 
   return (
     <>
@@ -252,18 +252,18 @@ const handleLogin = async (e) => {
                                 type="submit"
                               >
                                 {loading ? (
-                          <RiseLoader
-                            color={color}
-                            loading={loading}
-                            cssOverride={override}
-                            size={10}
-                            aria-label="Loading Spinner"
-                            data-testid="loader"
-                            className="loader"
-                          />
-                        ) : (
-                          " Sign in"
-                        )}
+                                  <RiseLoader
+                                    color={color}
+                                    loading={loading}
+                                    cssOverride={override}
+                                    size={10}
+                                    aria-label="Loading Spinner"
+                                    data-testid="loader"
+                                    className="loader"
+                                  />
+                                ) : (
+                                  " Sign in"
+                                )}
                               </button>
                             </div>
 

@@ -12,8 +12,8 @@ import "datatables.net-buttons/js/buttons.colVis.min"; // Column visibility butt
 import "jszip/dist/jszip"; // JSZip for Excel export
 import "datatables.net-buttons/js/buttons.flash.min"; // Flash export (optional)
 import "datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css"; // Buttons Bootstrap 5 CSS
-import axiosInstance from "../../../utils/axiosInstance";
-import { formatAmount, formatNumber } from "../../../utils/helpers";
+import axiosInstance from "../../../utils/AxiosInstance";
+import { formatAmount, formatNumber } from "../../../utils/Helpers";
 import Greetings from "../../../components/greetings/Greetings";
 import ContentLoader from "react-content-loader";
 import ImportOnOrderUpdate from "./ImportOnOrderUpdate";

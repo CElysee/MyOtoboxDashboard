@@ -15,7 +15,7 @@ import "datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css"; // Buttons B
 import AddNewTrim from "../modals/AddNewTrim";
 import EditCarTrim from "../modals/EditCarTrim";
 import { useSelector } from "react-redux";
-import axiosInstance from "../../../utils/axiosInstance";
+import axiosInstance from "../../../utils/AxiosInstance";
 import RiseLoader from "react-spinners/RiseLoader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

@@ -2,8 +2,8 @@ import React, { useEffect, useState, useRef } from "react";
 import TopMenu from "../TopMenu";
 import SideMenu from "../SideMenu";
 import { useSelector } from "react-redux";
-import axiosInstance from "../../../utils/axiosInstance";
-import { formatAmount, formatNumber } from "../../../utils/helpers";
+import axiosInstance from "../../../utils/AxiosInstance";
+import { formatAmount, formatNumber } from "../../../utils/Helpers";
 import $ from "jquery"; // Import jQuery
 import "datatables.net"; // Import DataTables library
 import "datatables.net-bs5"; // Import DataTables Bootstrap 5 integration
@@ -70,7 +70,9 @@ function Dashboard() {
     };
   }, [isLoading]);
   useEffect(() => {
-    const tableImportOnOrders = $(!isLoading && importOnOrderRef.current).DataTable({
+    const tableImportOnOrders = $(
+      !isLoading && importOnOrderRef.current
+    ).DataTable({
       dom: "lBfrtip", // 'l' for length menu (entries per page dropdown)
       scrollX: true,
       buttons: [

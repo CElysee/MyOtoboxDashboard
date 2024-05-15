@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import { useDropzone } from "react-dropzone";
-import axiosInstance from "../../../utils/axiosInstance";
+import axiosInstance from "../../../utils/AxiosInstance";
 import RiseLoader from "react-spinners/RiseLoader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -234,7 +234,7 @@ function AddNewCar({ userRefresh }) {
         car_standard_features_id: [],
         car_condition: "",
         car_seller_name: "",
-      })
+      });
       dismissButtonRef.current.click();
     } catch (error) {
       console.log("Error adding new car", error);
@@ -580,9 +580,12 @@ function AddNewCar({ userRefresh }) {
                         required
                       >
                         <option>Select body type</option>
-                        {bodyTypeList.length > 0 && bodyTypeList.map((body) => (
-                          <option key={body.id} value={bodyTypeList.id}>{body.body_type_name}</option>
-                        ))}
+                        {bodyTypeList.length > 0 &&
+                          bodyTypeList.map((body) => (
+                            <option key={body.id} value={bodyTypeList.id}>
+                              {body.body_type_name}
+                            </option>
+                          ))}
                       </select>
                     </div>
                   </div>

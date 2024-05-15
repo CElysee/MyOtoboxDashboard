@@ -12,8 +12,8 @@ import "datatables.net-buttons/js/buttons.colVis.min"; // Column visibility butt
 import "jszip/dist/jszip"; // JSZip for Excel export
 import "datatables.net-buttons/js/buttons.flash.min"; // Flash export (optional)
 import "datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css"; // Buttons Bootstrap 5 CSS
-import axiosInstance from "../../../utils/axiosInstance";
-import { formatAmount, formatNumber } from "../../../utils/helpers";
+import axiosInstance from "../../../utils/AxiosInstance";
+import { formatAmount, formatNumber } from "../../../utils/Helpers";
 import Greetings from "../../../components/greetings/Greetings";
 import ContentLoader from "react-content-loader";
 
@@ -155,9 +155,7 @@ function TaxCalculator() {
                               className="counter-value"
                               data-target={countBookings.count_brands}
                             >
-                              {formatNumber(
-                                countBookings.count_brands
-                              )}
+                              {formatNumber(countBookings.count_brands)}
                             </span>
                           </h4>
                         </div>
@@ -177,7 +175,7 @@ function TaxCalculator() {
                       <div className="d-flex align-items-center">
                         <div className="flex-grow-1 overflow-hidden">
                           <p className="text-uppercase fw-medium text-muted text-truncate mb-0">
-                           Models
+                            Models
                           </p>
                         </div>
                         <div className="flex-shrink-0">
@@ -194,9 +192,7 @@ function TaxCalculator() {
                               className="counter-value"
                               data-target={countBookings.count_models}
                             >
-                              {formatNumber(
-                                countBookings.count_models
-                              )}
+                              {formatNumber(countBookings.count_models)}
                             </span>
                           </h4>
                         </div>
@@ -232,9 +228,7 @@ function TaxCalculator() {
                               className="counter-value"
                               data-target={countBookings.count_trims}
                             >
-                              {formatNumber(
-                                countBookings.count_trims
-                              )}
+                              {formatNumber(countBookings.count_trims)}
                             </span>
                           </h4>
                         </div>
@@ -305,7 +299,9 @@ function TaxCalculator() {
                                   {tax.car_trim.trim_name}
                                 </td>
                                 <td>{formatAmount(tax.price_when_new)} USD</td>
-                                <td>{formatAmount(tax.current_residual_value)} USD</td>
+                                <td>
+                                  {formatAmount(tax.current_residual_value)} USD
+                                </td>
                                 <td>{formatAmount(tax.cif_kigali)} USD</td>
                                 <td>{formatAmount(tax.current_value)} RWF</td>
                                 <td>{formatAmount(tax.import_duty_tax)} RWF</td>

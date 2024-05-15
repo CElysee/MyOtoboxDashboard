@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import axiosInstance from "../../../utils/axiosInstance";
+import axiosInstance from "../../../utils/AxiosInstance";
 import RiseLoader from "react-spinners/RiseLoader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -60,7 +60,10 @@ function AddNewTrim({ userRefresh }) {
     setLoading(true);
     // console.log(inputValues);
     try {
-      const response = await axiosInstance.post("/car_trim/create", inputValues);
+      const response = await axiosInstance.post(
+        "/car_trim/create",
+        inputValues
+      );
       notify(response.data.message, "success");
       setLoading(false);
       userRefresh(true);
