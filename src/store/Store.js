@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import userSlice from "../features/userSlice"; // Adjust import path
+import userSlice from "../features/UserSlice"; // Adjust import path
 import greetingReducer from "../features/GreetingsSlice"; // Adjust import path 
 
 const persistConfig = {
