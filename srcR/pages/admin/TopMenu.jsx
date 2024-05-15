@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser } from "../../features/userSlice";
-import { logout } from "../../features/userSlice";
+import { selectUser } from "../../features/UserSlice";
+import { logout } from "../../features/UserSlice";
 
 function TopMenu() {
   const user = useSelector(selectUser);
@@ -820,7 +820,7 @@ function TopMenu() {
                       {user.name}
                     </span>
                     <span className="d-none d-xl-block ms-1 fs-13 user-name-sub-text">
-                    {user.role}
+                      {user.role}
                     </span>
                   </span>
                 </span>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import RiseLoader from "react-spinners/RiseLoader";
 import axiosInstance from "../../utils/AxiosInstance";
-import { login } from "../../features/userSlice";
+import { login } from "../../features/UserSlice";
 import { useDispatch } from "react-redux";
 
 const override = {
