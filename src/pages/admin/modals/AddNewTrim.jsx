@@ -17,6 +17,7 @@ function AddNewTrim({ userRefresh }) {
   const [allModels, setAllModels] = useState([]);
   const [color, setColor] = useState("#fff");
   const dismissButtonRef = useRef();
+  const [error, setError] = useState(null);
   const [inputValues, setInputValues] = useState({
     car_brand_id: "",
     car_model_id: "",
@@ -24,6 +25,8 @@ function AddNewTrim({ userRefresh }) {
     engine: "",
     curb_weight: "",
     trim_hp: "",
+    trim_production_years: "",
+    trim_excel: "",
   });
 
   useEffect(() => {
@@ -52,6 +55,10 @@ function AddNewTrim({ userRefresh }) {
       }
       // console.log("Selected brand models", selectedBrand.models);
     }
+    if (name === "trim_excel") {
+      setInputValues({ ...inputValues, [name]: e.target.files[0] });
+      return;
+    }
     setInputValues({ ...inputValues, [name]: value });
   };
 
@@ -72,6 +79,30 @@ function AddNewTrim({ userRefresh }) {
       console.log("Error adding new trim", error);
     }
   };
+  const handleExcelSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("car_brand_id", inputValues.car_brand_id);
+    formData.append("file", inputValues.trim_excel);
+    console.log(...formData.entries());
+    try {
+      const response = await axiosInstance.post(
+        "/car_trim/create_excel",
+        formData
+      );
+      console.log(response.data);
+      notify(response.data.message, "success");
+      setLoading(false);
+      userRefresh(true);
+      dismissButtonRef.current.click();
+      setError(null);
+    } catch (error) {
+      console.log("Error adding new trim", error);
+      setError(error.message);
+      setLoading(false);
+    }
+  }
   const notify = (message, type) => {
     if (type === "success") {
       toast.success(message, {
@@ -106,147 +137,313 @@ function AddNewTrim({ userRefresh }) {
               ></button>
             </div>
             <div className="modal-body">
-              <form onSubmit={handleSubmit}>
-                <div className="row g-3">
-                  <div className="col-xxl-6">
-                    <div>
-                      <label htmlFor="car_brand_id" className="form-label">
-                        Brand Name
-                      </label>
-                      <select
-                        className="form-control"
-                        name="car_brand_id"
-                        id="car_brand_id"
-                        onChange={handleInputChange}
-                        value={inputValues.car_brand_id}
-                        required
+              {" "}
+              <div className="card">
+                <div className="card-body">
+                  <ul
+                    className="nav nav-tabs nav-tabs-custom nav-info nav-justified mb-3"
+                    role="tablist"
+                  >
+                    <li className="nav-item">
+                      <a
+                        className="nav-link active"
+                        data-bs-toggle="tab"
+                        href="#manual-upload"
+                        role="tab"
                       >
-                        <option>Select brand</option>
-                        {allBrandsModels.length > 0 &&
-                          allBrandsModels.map((brand, index) => (
-                            <option key={index} value={brand.id}>
-                              {brand.name}
-                            </option>
-                          ))}
-                      </select>
-                    </div>
-                  </div>
-                  <div className="col-xxl-6">
-                    <div>
-                      <label htmlFor="car_model_id" className="form-label">
-                        Model Name
-                      </label>
-                      <select
-                        className="form-control"
-                        name="car_model_id"
-                        id="car_model_id"
-                        onChange={handleInputChange}
-                        value={inputValues.car_model_id}
-                        required
+                        Manual Upload
+                      </a>
+                    </li>
+                    <li className="nav-item">
+                      <a
+                        className="nav-link"
+                        data-bs-toggle="tab"
+                        href="#profile1"
+                        role="tab"
                       >
-                        <option>Select model</option>
-                        {allModels.length > 0 &&
-                          allModels.map((model, index) => (
-                            <option key={index} value={model.id}>
-                              {model.brand_model_name}
-                            </option>
-                          ))}
-                      </select>
+                        With Excel File
+                      </a>
+                    </li>
+                  </ul>
+                  <div className="tab-content text-muted">
+                    <div
+                      className="tab-pane active"
+                      id="manual-upload"
+                      role="tabpanel"
+                    >
+                      <div className="d-flex">
+                        <div className="flex-grow-1 ms-2">
+                          <form onSubmit={handleSubmit}>
+                            <div className="row g-3">
+                              <div className="col-xxl-6">
+                                <div>
+                                  <label
+                                    htmlFor="car_brand_id"
+                                    className="form-label"
+                                  >
+                                    Brand Name
+                                  </label>
+                                  <select
+                                    className="form-control"
+                                    name="car_brand_id"
+                                    id="car_brand_id"
+                                    onChange={handleInputChange}
+                                    value={inputValues.car_brand_id}
+                                    required
+                                  >
+                                    <option>Select brand</option>
+                                    {allBrandsModels.length > 0 &&
+                                      allBrandsModels.map((brand, index) => (
+                                        <option key={index} value={brand.id}>
+                                          {brand.name}
+                                        </option>
+                                      ))}
+                                  </select>
+                                </div>
+                              </div>
+                              <div className="col-xxl-6">
+                                <div>
+                                  <label
+                                    htmlFor="car_model_id"
+                                    className="form-label"
+                                  >
+                                    Model Name
+                                  </label>
+                                  <select
+                                    className="form-control"
+                                    name="car_model_id"
+                                    id="car_model_id"
+                                    onChange={handleInputChange}
+                                    value={inputValues.car_model_id}
+                                    required
+                                  >
+                                    <option>Select model</option>
+                                    {allModels.length > 0 &&
+                                      allModels.map((model, index) => (
+                                        <option key={index} value={model.id}>
+                                          {model.brand_model_name}
+                                        </option>
+                                      ))}
+                                  </select>
+                                </div>
+                              </div>
+                              <div className="col-xxl-6">
+                                <div>
+                                  <label
+                                    htmlFor="trim_name"
+                                    className="form-label"
+                                  >
+                                    Trim Name
+                                  </label>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    id="trim_name"
+                                    placeholder="Trim name"
+                                    name="trim_name"
+                                    value={inputValues.trim_name}
+                                    onChange={handleInputChange}
+                                    required
+                                  />
+                                </div>
+                              </div>
+                              <div className="col-xxl-6">
+                                <div>
+                                  <label
+                                    htmlFor="engine"
+                                    className="form-label"
+                                  >
+                                    Trim Engine CC
+                                  </label>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    id="engine"
+                                    placeholder="Trim engine cc"
+                                    name="engine"
+                                    value={inputValues.engine}
+                                    onChange={handleInputChange}
+                                  />
+                                </div>
+                              </div>
+                              <div className="col-xxl-6">
+                                <div>
+                                  <label
+                                    htmlFor="trim_hp"
+                                    className="form-label"
+                                  >
+                                    Trim Horse Power
+                                  </label>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    id="trim_hp"
+                                    placeholder="Trim Horse Power"
+                                    name="trim_hp"
+                                    value={inputValues.trim_hp}
+                                    onChange={handleInputChange}
+                                  />
+                                </div>
+                              </div>
+                              <div className="col-xxl-6">
+                                <div>
+                                  <label
+                                    htmlFor="curb_weight"
+                                    className="form-label"
+                                  >
+                                    Trim Curb Weight
+                                  </label>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    id="curb_weight"
+                                    placeholder="Trim curb weight"
+                                    name="curb_weight"
+                                    value={inputValues.curb_weight}
+                                    onChange={handleInputChange}
+                                  />
+                                </div>
+                              </div>
+                              <div className="col-xxl-6">
+                                <div>
+                                  <label
+                                    htmlFor="curb_weight"
+                                    className="form-label"
+                                  >
+                                    Trim Production Year
+                                  </label>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    id="trim_production_years"
+                                    placeholder="Trim Production Year"
+                                    name="trim_production_years"
+                                    value={inputValues.trim_production_years}
+                                    onChange={handleInputChange}
+                                  />
+                                </div>
+                              </div>
+                              <div className="col-lg-12">
+                                <div className="hstack gap-2 justify-content-end">
+                                  <button
+                                    ref={dismissButtonRef}
+                                    type="button"
+                                    className="btn btn-dark"
+                                    data-bs-dismiss="modal"
+                                  >
+                                    Close
+                                  </button>
+                                  <button
+                                    type="submit"
+                                    className="btn btn-info text-dark"
+                                  >
+                                    {loading ? (
+                                      <RiseLoader
+                                        color={color}
+                                        loading={loading}
+                                        cssOverride={override}
+                                        size={10}
+                                        aria-label="Loading Spinner"
+                                        data-testid="loader"
+                                      />
+                                    ) : (
+                                      "Save new trim"
+                                    )}
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="col-xxl-6">
-                    <div>
-                      <label htmlFor="trim_name" className="form-label">
-                        Trim Name
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="trim_name"
-                        placeholder="Trim name"
-                        name="trim_name"
-                        value={inputValues.trim_name}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="col-xxl-6">
-                    <div>
-                      <label htmlFor="engine" className="form-label">
-                        Trim Engine CC
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="engine"
-                        placeholder="Trim engine cc"
-                        name="engine"
-                        value={inputValues.engine}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-xxl-6">
-                    <div>
-                      <label htmlFor="trim_hp" className="form-label">
-                        Trim Horse Power
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="trim_hp"
-                        placeholder="Trim Horse Power"
-                        name="trim_hp"
-                        value={inputValues.trim_hp}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-xxl-6">
-                    <div>
-                      <label htmlFor="curb_weight" className="form-label">
-                        Trim Curb Weight
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="curb_weight"
-                        placeholder="Trim curb weight"
-                        name="curb_weight"
-                        value={inputValues.curb_weight}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-lg-12">
-                    <div className="hstack gap-2 justify-content-end">
-                      <button
-                        ref={dismissButtonRef}
-                        type="button"
-                        className="btn btn-dark"
-                        data-bs-dismiss="modal"
-                      >
-                        Close
-                      </button>
-                      <button type="submit" className="btn btn-info text-dark">
-                        {loading ? (
-                          <RiseLoader
-                            color={color}
-                            loading={loading}
-                            cssOverride={override}
-                            size={10}
-                            aria-label="Loading Spinner"
-                            data-testid="loader"
-                          />
-                        ) : (
-                          "Save new trim"
-                        )}
-                      </button>
+                    <div className="tab-pane" id="profile1" role="tabpanel">
+                      <div className="d-flex">
+                        <div className="flex-grow-1 ms-2">
+                          <form onSubmit={handleExcelSubmit}>
+                            <div className="row g-3">
+                              <div className="col-xxl-6">
+                                <div>
+                                  <label
+                                    htmlFor="car_brand_id"
+                                    className="form-label"
+                                  >
+                                    Brand Name
+                                  </label>
+                                  <select
+                                    className="form-control"
+                                    name="car_brand_id"
+                                    id="car_brand_id"
+                                    onChange={handleInputChange}
+                                    value={inputValues.car_brand_id}
+                                    required
+                                  >
+                                    <option>Select brand</option>
+                                    {allBrandsModels.length > 0 &&
+                                      allBrandsModels.map((brand, index) => (
+                                        <option key={index} value={brand.id}>
+                                          {brand.name}
+                                        </option>
+                                      ))}
+                                  </select>
+                                </div>
+                              </div>
+                              <div className="col-xxl-6">
+                                <div>
+                                  <label
+                                    htmlFor="trim_excel"
+                                    className="form-label"
+                                  >
+                                    Upload Excel File
+                                  </label>
+                                  <input
+                                    className="form-control"
+                                    type="file"
+                                    id="trim_excel"
+                                    name="trim_excel"
+                                    onChange={handleInputChange}
+                                    required
+                                  />
+                                </div>
+                              </div>
+                              <p className="text-danger">{error}</p>
+                              <div className="col-lg-12">
+                                <div className="hstack gap-2 justify-content-end">
+                                  <button
+                                    ref={dismissButtonRef}
+                                    type="button"
+                                    className="btn btn-dark"
+                                    data-bs-dismiss="modal"
+                                  >
+                                    Close
+                                  </button>
+                                  <button
+                                    type="submit"
+                                    className="btn btn-info text-dark"
+                                  >
+                                    {loading ? (
+                                      <RiseLoader
+                                        color={color}
+                                        loading={loading}
+                                        cssOverride={override}
+                                        size={10}
+                                        aria-label="Loading Spinner"
+                                        data-testid="loader"
+                                      />
+                                    ) : (
+                                      "Uplaod Excel File"
+                                    )}
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </form>
+              </div>
             </div>
           </div>
         </div>

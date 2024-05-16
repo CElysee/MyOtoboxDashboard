@@ -6695,12 +6695,12 @@ button {
 }
 
 .nav-info.nav-tabs-custom .nav-link.active {
-    color: #73dce9;
+    color: var(--primary-text-color-yellow);
     background-color: var(--vz-secondary-bg)
 }
 
 .nav-info.nav-tabs-custom .nav-link.active::after {
-    background-color: #73dce9
+    background-color: var(--primary-text-color-yellow)
 }
 
 .nav-info.arrow-navtabs .nav-link.active::before {
