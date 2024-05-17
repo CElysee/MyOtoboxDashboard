@@ -111,7 +111,36 @@ function CarsForSell() {
       <div className="main-content">
         <div className="page-content">
           <div className="container-fluid">
-            <Greetings />
+          <div className="row mb-3 pb-1">
+              <div className="col-12">
+                <div className="d-flex align-items-lg-center flex-lg-row flex-column">
+                  <Greetings />
+                  <div className="mt-3 mt-lg-0">
+                    <div className="row g-3 mb-0 align-items-center">
+                      <div className="col-auto">
+                        <button
+                          type="button"
+                          className="btn btn-info text-dark"
+                          data-bs-toggle="modal"
+                          data-bs-target="#exampleModalgrid"
+                        >
+                          <i className="ri-add-circle-line align-middle me-1"></i>{" "}
+                          Add new car for sell
+                        </button>
+                      </div>
+                      <div className="col-auto">
+                        <button
+                          type="button"
+                          className="btn btn-soft-info btn-icon waves-effect waves-light layout-rightside-btn"
+                        >
+                          <i className="ri-pulse-line"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div className="row">
               <div className="col-xl-2 col-md-6">
                 <div className="card card-animate">
@@ -420,6 +449,7 @@ function CarsForSell() {
                           ))}
                       </tbody>
                     </table>
+                    <AddNewCar userRefresh={setUserRefresh} />
                     <EditCarForSell
                       userRefresh={setUserRefresh}
                       showModal={showModal}
