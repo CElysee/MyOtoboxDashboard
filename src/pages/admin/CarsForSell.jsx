@@ -21,6 +21,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
 import Greetings from "../../components/greetings/Greetings";
+import ContentLoader from "react-content-loader";
 
 function CarsForSell() {
   const tableRef = useRef(null);
@@ -111,7 +112,7 @@ function CarsForSell() {
       <div className="main-content">
         <div className="page-content">
           <div className="container-fluid">
-          <div className="row mb-3 pb-1">
+            <div className="row mb-3 pb-1">
               <div className="col-12">
                 <div className="d-flex align-items-lg-center flex-lg-row flex-column">
                   <Greetings />
@@ -346,119 +347,145 @@ function CarsForSell() {
                 </div>
               </div>
             </div>
+            {isLoading ? (
+              <div>
+                <ContentLoader
+                  style={{ width: "50%", height: "500px", padding: "10px" }}
+                  speed={1}
+                  backgroundColor="#eee"
+                  foregroundColor="#e8e7e7"
+                >
+                  <rect x="2" y="4" rx="8" ry="8" width="70" height="20" />
+                  <rect x="100" y="4" rx="8" ry="8" width="60" height="20" />
+                  <rect x="0" y="40" rx="5" ry="5" width="650" height="415" />
+                </ContentLoader>
+                <ContentLoader
+                  style={{ width: "50%", height: "500px", padding: "10px" }}
+                  speed={1}
+                  backgroundColor="#eee"
+                  foregroundColor="#e8e7e7"
+                >
+                  <rect x="2" y="4" rx="8" ry="8" width="70" height="20" />
+                  <rect x="100" y="4" rx="8" ry="8" width="60" height="20" />
+                  <rect x="0" y="40" rx="5" ry="5" width="650" height="415" />
+                </ContentLoader>
+              </div>
+            ) : (
+              <div className="row">
+                <div className="col-lg-12">
+                  <div className="card">
+                    <div className="card-header">
+                      <h5 className="card-title mb-0">Cars for Sale</h5>
+                    </div>
+                    <div className="card-body">
+                      <table
+                        ref={tableRef}
+                        id="scroll-horizontal"
+                        className="table nowrap align-middle"
+                        style={{ width: "100%" }}
+                      >
+                        <thead>
+                          <tr>
+                            <th>Action</th>
+                            <th>Stock Number</th>
+                            <th>Car Info/Name</th>
+                            <th>Price</th>
+                            <th>Kilometers/Mileage</th>
+                            <th>Vin/Chassic Number</th>
+                            <th>Transmission</th>
+                            <th>Fuel type</th>
+                            <th>Engine Capacity</th>
+                            <th>Interior Color</th>
+                            <th>Exterior Color</th>
+                            <th>Location</th>
+                            <th>Trim Image</th>
+                            <th>Create Date</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {allCars.length > 0 &&
+                            allCars.map((car, index) => (
+                              <tr key={index}>
+                                <td>
+                                  <div className="dropdown d-inline-block">
+                                    <button
+                                      className="btn btn-soft-secondary btn-sm dropdown"
+                                      type="button"
+                                      data-bs-toggle="dropdown"
+                                      aria-expanded="false"
+                                    >
+                                      <i className="ri-more-fill align-middle"></i>
+                                    </button>
 
-            <div className="row">
-              <div className="col-lg-12">
-                <div className="card">
-                  <div className="card-header">
-                    <h5 className="card-title mb-0">Cars for Sale</h5>
-                  </div>
-                  <div className="card-body">
-                    <table
-                      ref={tableRef}
-                      id="scroll-horizontal"
-                      className="table nowrap align-middle"
-                      style={{ width: "100%" }}
-                    >
-                      <thead>
-                        <tr>
-                          <th>Action</th>
-                          <th>Stock Number</th>
-                          <th>Car Info/Name</th>
-                          <th>Price</th>
-                          <th>Kilometers/Mileage</th>
-                          <th>Vin/Chassic Number</th>
-                          <th>Transmission</th>
-                          <th>Fuel type</th>
-                          <th>Engine Capacity</th>
-                          <th>Interior Color</th>
-                          <th>Exterior Color</th>
-                          <th>Location</th>
-                          <th>Trim Image</th>
-                          <th>Create Date</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {allCars.length > 0 &&
-                          allCars.map((car, index) => (
-                            <tr key={index}>
-                              <td>
-                                <div className="dropdown d-inline-block">
-                                  <button
-                                    className="btn btn-soft-secondary btn-sm dropdown"
-                                    type="button"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                  >
-                                    <i className="ri-more-fill align-middle"></i>
-                                  </button>
+                                    <ul className="dropdown-menu dropdown-menu-end">
+                                      <li>
+                                        <button
+                                          className="dropdown-item edit-item-btn"
+                                          type="button"
+                                          data-bs-toggle="modal"
+                                          data-bs-target="#editCarForSell"
+                                          onClick={() =>
+                                            handleEditCarForSell(car)
+                                          }
+                                        >
+                                          <i className="ri-pencil-fill align-bottom me-2 text-muted"></i>{" "}
+                                          Edit
+                                        </button>
+                                      </li>
+                                      <li>
+                                        <button
+                                          className="dropdown-item remove-item-btn"
+                                          onClick={() =>
+                                            handleCarDelete(car.id)
+                                          }
+                                        >
+                                          <i className="ri-delete-bin-fill align-bottom me-2 text-muted"></i>{" "}
+                                          Delete
+                                        </button>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                </td>
+                                <td>{car.stock_number}</td>
+                                <td>{car.car_name_info}</td>
+                                <td>{formatCurrency(car.car_price)} Rwf</td>
+                                <td>{formatCurrency(car.car_mileage)} kms</td>
+                                <td>{car.car_vin_number}</td>
+                                <td>
+                                  {car.car_transmission ==
+                                  "Automatic Transmission"
+                                    ? "Auto"
+                                    : "Manul"}
+                                </td>
+                                <td>{car.car_fuel_type}</td>
+                                <td>{car.car_engine_capacity}</td>
+                                <td>{car.car_interior_color}</td>
+                                <td>{car.car_exterior_color}</td>
+                                <td>{car.car_location}</td>
+                                <td>
+                                  <img
+                                    src={`${imageBaseUrl}${car.cover_image}`}
+                                    alt="Car Cover Image"
+                                    width={"50px"}
+                                  ></img>
+                                </td>
 
-                                  <ul className="dropdown-menu dropdown-menu-end">
-                                    <li>
-                                      <button
-                                        className="dropdown-item edit-item-btn"
-                                        type="button"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#editCarForSell"
-                                        onClick={() =>
-                                          handleEditCarForSell(car)
-                                        }
-                                      >
-                                        <i className="ri-pencil-fill align-bottom me-2 text-muted"></i>{" "}
-                                        Edit
-                                      </button>
-                                    </li>
-                                    <li>
-                                      <button
-                                        className="dropdown-item remove-item-btn"
-                                        onClick={() => handleCarDelete(car.id)}
-                                      >
-                                        <i className="ri-delete-bin-fill align-bottom me-2 text-muted"></i>{" "}
-                                        Delete
-                                      </button>
-                                    </li>
-                                  </ul>
-                                </div>
-                              </td>
-                              <td>{car.stock_number}</td>
-                              <td>{car.car_name_info}</td>
-                              <td>{formatCurrency(car.car_price)} Rwf</td>
-                              <td>{formatCurrency(car.car_mileage)} kms</td>
-                              <td>{car.car_vin_number}</td>
-                              <td>
-                                {car.car_transmission ==
-                                "Automatic Transmission"
-                                  ? "Auto"
-                                  : "Manul"}
-                              </td>
-                              <td>{car.car_fuel_type}</td>
-                              <td>{car.car_engine_capacity}</td>
-                              <td>{car.car_interior_color}</td>
-                              <td>{car.car_exterior_color}</td>
-                              <td>{car.car_location}</td>
-                              <td>
-                                <img
-                                  src={`${imageBaseUrl}${car.cover_image}`}
-                                  alt="Car Cover Image"
-                                  width={"50px"}
-                                ></img>
-                              </td>
-
-                              <td>{car.created_at}</td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </table>
-                    <AddNewCar userRefresh={setUserRefresh} />
-                    <EditCarForSell
-                      userRefresh={setUserRefresh}
-                      showModal={showModal}
-                      car={selectCar}
-                    />
+                                <td>{car.created_at}</td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                      <AddNewCar userRefresh={setUserRefresh} />
+                      <EditCarForSell
+                        userRefresh={setUserRefresh}
+                        showModal={showModal}
+                        car={selectCar}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

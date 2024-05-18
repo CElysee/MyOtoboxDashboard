@@ -20,6 +20,7 @@ import RiseLoader from "react-spinners/RiseLoader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Greetings from "../../../components/greetings/Greetings";
+import ContentLoader from "react-content-loader";
 
 function CarBrands() {
   const tableRef = useRef(null);
@@ -236,97 +237,121 @@ function CarBrands() {
                 </div>
               </div>
             </div>
-
-            <div className="row">
-              <div className="col-lg-12">
-                <div className="card">
-                  <div className="card-header">
-                    <h5 className="card-title mb-0">All Brands</h5>
-                  </div>
-                  <div className="card-body">
-                    <table
-                      ref={tableRef}
-                      id="scroll-horizontal"
-                      className="table nowrap align-middle"
-                      style={{ width: "100%" }}
-                    >
-                      <thead>
-                        <tr>
-                          <th>No</th>
-                          <th>Brand Name</th>
-                          <th>Origin Country</th>
-                          <th>Logo</th>
-                          <th>Create Date</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {brandsList.length > 0 &&
-                          brandsList.map((brand, index) => (
-                            <tr key={index}>
-                              <td>{index + 1}</td>
-                              <td>{brand.name}</td>
-                              <td>{brand.country_name}</td>
-                              <td>
-                                <img
-                                  src={`${imageBaseUrl}/BrandLogo/${brand.brand_logo}`}
-                                  width={"50px"}
-                                ></img>
-                              </td>
-                              <td>{brand.created_at}</td>
-                              <td>
-                                <div className="dropdown d-inline-block">
-                                  <button
-                                    className="btn btn-soft-secondary btn-sm dropdown"
-                                    type="button"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                  >
-                                    <i className="ri-more-fill align-middle"></i>
-                                  </button>
-                                  <ul className="dropdown-menu dropdown-menu-end">
-                                    <li>
-                                      <button
-                                        className="dropdown-item edit-item-btn"
-                                        type="button"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#editCarBrandModal"
-                                        onClick={() =>
-                                          handleEditCarBrand(brand)
-                                        }
-                                      >
-                                        <i className="ri-pencil-fill align-bottom me-2 text-muted"></i>{" "}
-                                        Edit
-                                      </button>
-                                    </li>
-                                    <li>
-                                      <button
-                                        className="dropdown-item remove-item-btn"
-                                        onClick={() =>
-                                          handleDeleteCarBrand(brand.id)
-                                        }
-                                      >
-                                        <i className="ri-delete-bin-fill align-bottom me-2 text-muted"></i>{" "}
-                                        Delete
-                                      </button>
-                                    </li>
-                                  </ul>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </table>
-                    <EditCarBrand
-                      userRefresh={setUserRefresh}
-                      showModal={showModal}
-                      brand={selectCarBrand}
-                    />
-                    <AddNewBrand userRefresh={setUserRefresh} />
+            {isLoading ? (
+              <div>
+                <ContentLoader
+                  style={{ width: "50%", height: "500px", padding: "10px" }}
+                  speed={1}
+                  backgroundColor="#eee"
+                  foregroundColor="#e8e7e7"
+                >
+                  <rect x="2" y="4" rx="8" ry="8" width="70" height="20" />
+                  <rect x="100" y="4" rx="8" ry="8" width="60" height="20" />
+                  <rect x="0" y="40" rx="5" ry="5" width="650" height="415" />
+                </ContentLoader>
+                <ContentLoader
+                  style={{ width: "50%", height: "500px", padding: "10px" }}
+                  speed={1}
+                  backgroundColor="#eee"
+                  foregroundColor="#e8e7e7"
+                >
+                  <rect x="2" y="4" rx="8" ry="8" width="70" height="20" />
+                  <rect x="100" y="4" rx="8" ry="8" width="60" height="20" />
+                  <rect x="0" y="40" rx="5" ry="5" width="650" height="415" />
+                </ContentLoader>
+              </div>
+            ) : (
+              <div className="row">
+                <div className="col-lg-12">
+                  <div className="card">
+                    <div className="card-header">
+                      <h5 className="card-title mb-0">All Brands</h5>
+                    </div>
+                    <div className="card-body">
+                      <table
+                        ref={tableRef}
+                        id="scroll-horizontal"
+                        className="table nowrap align-middle"
+                        style={{ width: "100%" }}
+                      >
+                        <thead>
+                          <tr>
+                            <th>No</th>
+                            <th>Brand Name</th>
+                            <th>Origin Country</th>
+                            <th>Logo</th>
+                            <th>Create Date</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {brandsList.length > 0 &&
+                            brandsList.map((brand, index) => (
+                              <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{brand.name}</td>
+                                <td>{brand.country_name}</td>
+                                <td>
+                                  <img
+                                    src={`${imageBaseUrl}/BrandLogo/${brand.brand_logo}`}
+                                    width={"50px"}
+                                  ></img>
+                                </td>
+                                <td>{brand.created_at}</td>
+                                <td>
+                                  <div className="dropdown d-inline-block">
+                                    <button
+                                      className="btn btn-soft-secondary btn-sm dropdown"
+                                      type="button"
+                                      data-bs-toggle="dropdown"
+                                      aria-expanded="false"
+                                    >
+                                      <i className="ri-more-fill align-middle"></i>
+                                    </button>
+                                    <ul className="dropdown-menu dropdown-menu-end">
+                                      <li>
+                                        <button
+                                          className="dropdown-item edit-item-btn"
+                                          type="button"
+                                          data-bs-toggle="modal"
+                                          data-bs-target="#editCarBrandModal"
+                                          onClick={() =>
+                                            handleEditCarBrand(brand)
+                                          }
+                                        >
+                                          <i className="ri-pencil-fill align-bottom me-2 text-muted"></i>{" "}
+                                          Edit
+                                        </button>
+                                      </li>
+                                      <li>
+                                        <button
+                                          className="dropdown-item remove-item-btn"
+                                          onClick={() =>
+                                            handleDeleteCarBrand(brand.id)
+                                          }
+                                        >
+                                          <i className="ri-delete-bin-fill align-bottom me-2 text-muted"></i>{" "}
+                                          Delete
+                                        </button>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                      <EditCarBrand
+                        userRefresh={setUserRefresh}
+                        showModal={showModal}
+                        brand={selectCarBrand}
+                      />
+                      <AddNewBrand userRefresh={setUserRefresh} />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

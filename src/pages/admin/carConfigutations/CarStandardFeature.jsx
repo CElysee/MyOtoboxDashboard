@@ -20,6 +20,7 @@ import RiseLoader from "react-spinners/RiseLoader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Greetings from "../../../components/greetings/Greetings";
+import ContentLoader from "react-content-loader";
 
 function CarStandardFeature() {
   const tableRef = useRef(null);
@@ -38,7 +39,7 @@ function CarStandardFeature() {
         const res = await axiosInstance.get("/car_standard_features/list");
         setAllFeatures(res.data.standard_features);
         setDashboardCounts(res.data.counts);
-        // setIsLoading(false);
+        setIsLoading(false);
         setUserRefresh(false);
       } catch (error) {
         console.log(error);
@@ -271,88 +272,112 @@ function CarStandardFeature() {
                 </div>
               </div>
             </div>
-
-            <div className="row">
-              <div className="col-lg-12">
-                <div className="card">
-                  <div className="card-header">
-                    <h5 className="card-title mb-0">All Features</h5>
-                  </div>
-                  <div className="card-body">
-                    <table
-                      ref={tableRef}
-                      id="scroll-horizontal"
-                      className="table nowrap align-middle"
-                      style={{ width: "100%" }}
-                    >
-                      <thead>
-                        <tr>
-                          <th>No</th>
-                          <th>Feature Name</th>
-                          <th>Create Date</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {allFeatures.length > 0 &&
-                          allFeatures.map((feature, index) => (
-                            <tr key={index}>
-                              <td>{index + 1}</td>
-                              <td>{feature.feature_name}</td>
-                              <td>{feature.created_at}</td>
-                              <td>
-                                <div className="dropdown d-inline-block">
-                                  <button
-                                    className="btn btn-soft-secondary btn-sm dropdown"
-                                    type="button"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                  >
-                                    <i className="ri-more-fill align-middle"></i>
-                                  </button>
-                                  <ul className="dropdown-menu dropdown-menu-end">
-                                    <li>
-                                      <button
-                                        className="dropdown-item edit-item-btn"
-                                        type="button"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#editCarFeatureModal"
-                                        onClick={() =>
-                                          handleSelectedFeature(feature)
-                                        }
-                                      >
-                                        <i className="ri-pencil-fill align-bottom me-2 text-muted"></i>{" "}
-                                        Edit
-                                      </button>
-                                    </li>
-                                    <li>
-                                      <button
-                                        className="dropdown-item remove-item-btn"
-                                        onClick={() =>
-                                          handleDeleteFeature(feature.id)
-                                        }
-                                      >
-                                        <i className="ri-delete-bin-fill align-bottom me-2 text-muted"></i>{" "}
-                                        Delete
-                                      </button>
-                                    </li>
-                                  </ul>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </table>
-                    <AddNewStandardFeature userRefresh={setUserRefresh} />
-                    <EditStandardFeature
-                      userRefresh={setUserRefresh}
-                      showModal={showModal}
-                      carFeature={selectedFeature}
-                    />
+            {isLoading ? (
+              <div>
+                <ContentLoader
+                  style={{ width: "50%", height: "500px", padding: "10px" }}
+                  speed={1}
+                  backgroundColor="#eee"
+                  foregroundColor="#e8e7e7"
+                >
+                  <rect x="2" y="4" rx="8" ry="8" width="70" height="20" />
+                  <rect x="100" y="4" rx="8" ry="8" width="60" height="20" />
+                  <rect x="0" y="40" rx="5" ry="5" width="650" height="415" />
+                </ContentLoader>
+                <ContentLoader
+                  style={{ width: "50%", height: "500px", padding: "10px" }}
+                  speed={1}
+                  backgroundColor="#eee"
+                  foregroundColor="#e8e7e7"
+                >
+                  <rect x="2" y="4" rx="8" ry="8" width="70" height="20" />
+                  <rect x="100" y="4" rx="8" ry="8" width="60" height="20" />
+                  <rect x="0" y="40" rx="5" ry="5" width="650" height="415" />
+                </ContentLoader>
+              </div>
+            ) : (
+              <div className="row">
+                <div className="col-lg-12">
+                  <div className="card">
+                    <div className="card-header">
+                      <h5 className="card-title mb-0">All Features</h5>
+                    </div>
+                    <div className="card-body">
+                      <table
+                        ref={tableRef}
+                        id="scroll-horizontal"
+                        className="table nowrap align-middle"
+                        style={{ width: "100%" }}
+                      >
+                        <thead>
+                          <tr>
+                            <th>No</th>
+                            <th>Feature Name</th>
+                            <th>Create Date</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {allFeatures.length > 0 &&
+                            allFeatures.map((feature, index) => (
+                              <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{feature.feature_name}</td>
+                                <td>{feature.created_at}</td>
+                                <td>
+                                  <div className="dropdown d-inline-block">
+                                    <button
+                                      className="btn btn-soft-secondary btn-sm dropdown"
+                                      type="button"
+                                      data-bs-toggle="dropdown"
+                                      aria-expanded="false"
+                                    >
+                                      <i className="ri-more-fill align-middle"></i>
+                                    </button>
+                                    <ul className="dropdown-menu dropdown-menu-end">
+                                      <li>
+                                        <button
+                                          className="dropdown-item edit-item-btn"
+                                          type="button"
+                                          data-bs-toggle="modal"
+                                          data-bs-target="#editCarFeatureModal"
+                                          onClick={() =>
+                                            handleSelectedFeature(feature)
+                                          }
+                                        >
+                                          <i className="ri-pencil-fill align-bottom me-2 text-muted"></i>{" "}
+                                          Edit
+                                        </button>
+                                      </li>
+                                      <li>
+                                        <button
+                                          className="dropdown-item remove-item-btn"
+                                          onClick={() =>
+                                            handleDeleteFeature(feature.id)
+                                          }
+                                        >
+                                          <i className="ri-delete-bin-fill align-bottom me-2 text-muted"></i>{" "}
+                                          Delete
+                                        </button>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                      <AddNewStandardFeature userRefresh={setUserRefresh} />
+                      <EditStandardFeature
+                        userRefresh={setUserRefresh}
+                        showModal={showModal}
+                        carFeature={selectedFeature}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
