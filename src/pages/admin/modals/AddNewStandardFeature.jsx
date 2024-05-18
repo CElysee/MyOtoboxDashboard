@@ -80,7 +80,7 @@ function AddNewStandardFeature({ userRefresh }) {
       setError(null)
     } catch (error) {
       console.log("Error adding new standard feature", error);
-      setError(error.message)
+      setError(error.response.data.detail);
     }
   }
 

@@ -100,7 +100,7 @@ function AddNewTrim({ userRefresh }) {
       setError(null);
     } catch (error) {
       console.log("Error adding new trim", error);
-      setError(error.message);
+      setError(error.response.data.detail);
       setLoading(false);
     }
   }
