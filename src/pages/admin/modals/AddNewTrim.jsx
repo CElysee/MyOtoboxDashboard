@@ -17,6 +17,7 @@ function AddNewTrim({ userRefresh }) {
   const [allModels, setAllModels] = useState([]);
   const [color, setColor] = useState("#fff");
   const dismissButtonRef = useRef();
+  const [errorSubmit, setErrorSubmit] = useState(null);
   const [error, setError] = useState(null);
   const [inputValues, setInputValues] = useState({
     car_brand_id: "",

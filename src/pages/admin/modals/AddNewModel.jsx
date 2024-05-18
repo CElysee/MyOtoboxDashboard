@@ -15,6 +15,7 @@ function AddNewModel({ userRefresh }) {
   const [loading, setLoading] = useState(false);
   const [color, setColor] = useState("#fff");
   const dismissButtonRef = useRef();
+  const [errorSubmit, setErrorSubmit] = useState(null);
   const [inputValues, setInputValues] = useState({
     brand_model_name: "",
     brand_id: "",
@@ -55,34 +56,28 @@ function AddNewModel({ userRefresh }) {
       formData.append("production_years", inputValues.production_years);
       formData.append("brand_model_image", inputValues.brand_model_image);
       // console.log(...formData.entries());
-      try {
-        const response = await axiosInstance.post(
-          "/car_model/create",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-        notify(response.data.message, "success");
-        setLoading(false);
-        userRefresh(true);
-        dismissButtonRef.current.click();
-      } catch (error) {
-        console.log("Error creating new model", error);
-      }
+      const response = await axiosInstance.post("/car_model/create", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      notify(response.data.message, "success");
+      setLoading(false);
+      userRefresh(true);
+      dismissButtonRef.current.click();
     } catch (error) {
       console.log("Error creating new model", error);
+      setErrorSubmit(error.response.data.message);
+      setLoading(false);
     }
   };
   const handleExcelSubmit = async (e) => {
     event.preventDefault();
     setLoading(true);
     const formData = new FormData();
-      formData.append("file", inputValues.model_excel);
-      // console.log(...formData.entries());
-    try{
+    formData.append("file", inputValues.model_excel);
+    // console.log(...formData.entries());
+    try {
       const response = await axiosInstance.post(
         "/car_model/create_excel",
         formData,
@@ -97,11 +92,12 @@ function AddNewModel({ userRefresh }) {
       setLoading(false);
       userRefresh(true);
       dismissButtonRef.current.click();
-    }
-    catch(error){
+    } catch (error) {
       console.log("Error creating new model", error);
+      setLoading(false);
+      setErrorSubmit(error.response.data.detail);
     }
-  }
+  };
   const notify = (message, type) => {
     if (type === "success") {
       toast.success(message, {
@@ -257,6 +253,7 @@ function AddNewModel({ userRefresh }) {
                                   />
                                 </div>
                               </div>
+
                               <div className="col-lg-12">
                                 <div className="hstack gap-2 justify-content-end">
                                   <button
@@ -314,6 +311,7 @@ function AddNewModel({ userRefresh }) {
                                   />
                                 </div>
                               </div>
+                              <p className="text-danger">{errorSubmit}</p>
                               <div className="col-lg-12">
                                 <div className="hstack gap-2 justify-content-end">
                                   <button

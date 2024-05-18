@@ -15,6 +15,7 @@ function AddNewBrand({ userRefresh }) {
   const [loading, setLoading] = useState(false);
   const [color, setColor] = useState("#fff");
   const dismissButtonRef = useRef();
+  const [errorSubmit, setErrorSubmit] = useState(null);
   const [inputValues, setInputValues] = useState({
     brand_name: "",
     brand_logo: "",
@@ -68,6 +69,8 @@ function AddNewBrand({ userRefresh }) {
     } catch (error) {
       console.error("Error:", error);
       notify(error.data.message, "error");
+      setLoading(false);
+      setErrorSubmit(error.data.message);
     }
   };
 
@@ -295,6 +298,7 @@ function AddNewBrand({ userRefresh }) {
                                   </select>
                                 </div>
                               </div>
+                              <p className="text-danger">{errorSubmit}</p>
                               <div className="col-lg-12">
                                 <div className="hstack gap-2 justify-content-end">
                                   <button
@@ -326,55 +330,6 @@ function AddNewBrand({ userRefresh }) {
                               </div>
                             </div>
                           </form>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="tab-pane" id="messages1" role="tabpanel">
-                      <div className="d-flex">
-                        <div className="flex-shrink-0">
-                          <i className="ri-checkbox-multiple-blank-fill text-success"></i>
-                        </div>
-                        <div className="flex-grow-1 ms-2">
-                          Etsy mixtape wayfarers, ethical wes anderson tofu
-                          before they sold out mcsweeney's organic lomo retro
-                          fanny pack lo-fi farm-to-table readymade. Messenger
-                          bag gentrify pitchfork tattooed craft beer, iphone
-                          skateboard locavore carles etsy salvia banksy hoodie
-                          helvetica. DIY synth PBR banksy irony.
-                          <div className="mt-2">
-                            <a
-                              href="javascript:void(0);"
-                              className="btn btn-sm btn-soft-primary"
-                            >
-                              Read More{" "}
-                              <i className="ri-arrow-right-line ms-1 align-middle"></i>
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="tab-pane" id="settings1" role="tabpanel">
-                      <div className="d-flex">
-                        <div className="flex-shrink-0">
-                          <i className="ri-checkbox-multiple-blank-fill text-success"></i>
-                        </div>
-                        <div className="flex-grow-1 ms-2">
-                          when darkness overspreads my eyes, and heaven and
-                          earth seem to dwell in my soul and absorb its power,
-                          like the form of a beloved mistress, then I often
-                          think with longing, Oh, would I could describe these
-                          conceptions, could impress upon paper all that is
-                          living so full and warm within me, that it might be
-                          the.
-                          <div className="mt-2">
-                            <a
-                              href="javascript:void(0);"
-                              className="btn btn-sm btn-soft-primary"
-                            >
-                              Read More{" "}
-                              <i className="ri-arrow-right-line ms-1 align-middle"></i>
-                            </a>
-                          </div>
                         </div>
                       </div>
                     </div>
