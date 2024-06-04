@@ -22,6 +22,7 @@ import { useSelector } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
 import Greetings from "../../components/greetings/Greetings";
 import ContentLoader from "react-content-loader";
+import { formatAmount, formatDate, truncateText, capitalizeFirstLetter, formatNumber, roundNumbers} from "../../utils/Helpers";
 
 function CarsForSell() {
   const tableRef = useRef(null);
@@ -88,9 +89,6 @@ function CarsForSell() {
       console.log("Error deleting car", error);
       notify("Error deleting car", "danger");
     }
-  };
-  const formatCurrency = (amountInRwf) => {
-    return new Intl.NumberFormat("en-RW").format(amountInRwf);
   };
   const notify = (message, type) => {
     if (type === "success") {
@@ -375,7 +373,7 @@ function CarsForSell() {
                 <div className="col-lg-12">
                   <div className="card">
                     <div className="card-header">
-                      <h5 className="card-title mb-0">Cars for Sale</h5>
+                      <h5 className="card-title mb-0">Cars For Sale</h5>
                     </div>
                     <div className="card-body">
                       <table
@@ -448,8 +446,8 @@ function CarsForSell() {
                                 </td>
                                 <td>{car.stock_number}</td>
                                 <td>{car.car_name_info}</td>
-                                <td>{formatCurrency(car.car_price)} Rwf</td>
-                                <td>{formatCurrency(car.car_mileage)} kms</td>
+                                <td>{formatAmount(car.car_price)} Rwf</td>
+                                <td>{formatAmount(car.car_mileage)} kms</td>
                                 <td>{car.car_vin_number}</td>
                                 <td>
                                   {car.car_transmission ==

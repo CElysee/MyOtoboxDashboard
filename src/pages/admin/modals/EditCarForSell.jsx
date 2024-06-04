@@ -19,7 +19,7 @@ const override = {
   borderColor: "#e55812",
   paddingRight: "10px",
 };
-function AddNewCar({ userRefresh, car, showModal }) {
+function EditCarForSell({ userRefresh, car, showModal }) {
   const [car_images, setCarImages] = useState([]);
   const [cover_image, setCoverImage] = useState("");
   const [addedCarImages, setAddedCarImages] = useState([]);
@@ -931,4 +931,4 @@ function AddNewCar({ userRefresh, car, showModal }) {
   );
 }
 
-export default AddNewCar;
+export default EditCarForSell;

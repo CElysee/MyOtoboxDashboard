@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useRef,
+  useMemo,
+} from "react";
 import { useDropzone } from "react-dropzone";
 import axiosInstance from "../../../utils/AxiosInstance";
 import RiseLoader from "react-spinners/RiseLoader";
@@ -13,19 +19,24 @@ const override = {
   borderColor: "#e55812",
   paddingRight: "10px",
 };
-function AddNewCarRent({ userRefresh }) {
+function EditCarForRent({ userRefresh, car, showModal }) {
   const [car_images, setCarImages] = useState([]);
+  const [cover_image, setCoverImage] = useState("");
+  const [addedCarImages, setAddedCarImages] = useState([]);
+  const [bodyTypeList, setBodyTypeList] = useState("");
   const [loading, setLoading] = useState(false);
   const [carData, setCarData] = useState({});
   const [color, setColor] = useState("#fff");
-  const [bodyTypeList, setBodyTypeList] = useState("");
   const [allBrands, setAllBrands] = useState([]);
   const [allModels, setAllModels] = useState([]);
   const dismissButtonRef = useRef();
   const [allTrims, setAllTrims] = useState([]);
   const [allStandardFeatures, setAllStandardFeatures] = useState([]);
+  const [selectedFeatures, setSelectedFeatures] = useState([]);
+  const [addedFeatures, setAddedFeatures] = useState([]);
   const editorRef = useRef(null);
   const tinymce = import.meta.env.VITE_TINYMCE_API;
+  const imageBaseUrl = import.meta.env.VITE_REACT_APP_API;
 
   const [inputValues, setInputValues] = useState({
     car_name_info: "",
@@ -65,11 +76,21 @@ function AddNewCarRent({ userRefresh }) {
     car_dropoff_choice: "",
   });
 
+  // Include 'features' in the dependencies array
+  const savedFeatures = useMemo(() => {
+    if (showModal) {
+      return car.features.map((feature) => ({
+        value: feature.id,
+        label: feature.feature_name,
+      }));
+    }
+  }, [car]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const brand_response = await axiosInstance.get(
-          "/car_for_rent/car_brands/"
+          "/car_for_rent/car_brands"
         );
         const body_type_response = await axiosInstance.get(
           "/car_body_type/list"
@@ -84,11 +105,66 @@ function AddNewCarRent({ userRefresh }) {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (showModal === true) {
+      console.log(car);
+      // console.log("Car data", inputValues);
+      setInputValues((prevInputValues) => ({
+        ...prevInputValues,
+        car_name_info: car.car_name_info || "",
+        car_brand_id: car.car_brand_id || "",
+        car_model_id: car.car_model_id || "",
+        car_trim_id: car.car_trim_id || "",
+        car_year: car.car_year || "",
+        car_mileage: car.car_mileage || "",
+        car_price_per_day: car.car_price_per_day || "",
+        car_price: car.car_price || "",
+        car_price_per_week: car.car_price_per_week || "",
+        car_price_per_month: car.car_price_per_month || "",
+        car_price_per_day_up_country: car.car_price_per_day_up_country || "",
+        car_price_per_week_up_country: car.car_price_per_week_up_country || "",
+        car_price_per_month_up_country: car.car_price_per_month_up_country || "",
+        car_location: car.car_location || "",
+        car_exterior_color: car.car_exterior_color || "",
+        car_interior_color: car.car_interior_color || "",
+        car_fuel_type: car.car_fuel_type || "",
+        car_transmission: car.car_transmission || "",
+        car_engine_capacity: car.car_engine_capacity || "",
+        car_fuel_consumption: car.car_fuel_consumption || "",
+        car_drive_train: car.car_drive_train || "",
+        car_body_type: car.car_body_type || "",
+        car_vin_number: car.car_vin_number || "",
+        car_registration_number: car.car_registration_number || "",
+        car_insurance: car.car_insurance || "",
+        car_control_technique: car.car_control_technique || "",
+        renter_note: car.renter_note || "",
+        seller_type: car.seller_type || "",
+        renter_phone_number: car.renter_phone_number || "",
+        renter_email: car.renter_email || "",
+        car_standard_features_id: car.features_ids || "",
+        car_condition: car.car_condition || "",
+        car_renter_name: car.car_renter_name || "",
+      }));
+      const selectedBrand = allBrands.filter(
+        (brand) => brand.id === Number(car.car_brand_id)
+      )[0];
+      const selectModels = selectedBrand.models;
+      setAllModels(selectModels);
+      const selectTrims = selectModels.filter(
+        (model) => model.id === Number(car.car_model_id)
+      )[0].trims;
+      setAllTrims(selectTrims);
+      setAddedCarImages(car.car_images);
+      setAddedFeatures(savedFeatures);
+      setCoverImage(car.cover_image);
+    }
+  }, [car]);
+
   const standaFeaturesOptions = allStandardFeatures.map((feature) => ({
     value: feature.id,
     label: feature.feature_name,
   }));
-  // console.log(allBrands);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -116,6 +192,7 @@ function AddNewCarRent({ userRefresh }) {
   };
 
   const handleStandardFeatureChange = (selectedOptions) => {
+    setAddedFeatures(selectedOptions);
     const selectedFeatures = selectedOptions.map((option) => option.value);
     setInputValues({
       ...inputValues,
@@ -127,7 +204,7 @@ function AddNewCarRent({ userRefresh }) {
     // Update the content state whenever the editor content changes
     setInputValues((prevValues) => ({
       ...prevValues,
-      renter_note: content,
+      seller_note: content,
     }));
   };
 
@@ -155,27 +232,14 @@ function AddNewCarRent({ userRefresh }) {
     try {
       const formData = new FormData();
       formData.append("user_id", "1");
+      formData.append("car_id", car.id);
       formData.append("car_name_info", inputValues.car_name_info);
       formData.append("car_brand_id", inputValues.car_brand_id);
       formData.append("car_model_id", inputValues.car_model_id);
       formData.append("car_trim_id", inputValues.car_trim_id);
       formData.append("car_year", inputValues.car_year);
       formData.append("car_mileage", inputValues.car_mileage);
-      formData.append("car_price_per_day", inputValues.car_price_per_day);
-      formData.append("car_price_per_week", inputValues.car_price_per_week);
-      formData.append("car_price_per_month", inputValues.car_price_per_month);
-      formData.append(
-        "car_price_per_day_up_country",
-        inputValues.car_price_per_day_up_country
-      );
-      formData.append(
-        "car_price_per_week_up_country",
-        inputValues.car_price_per_week_up_country
-      );
-      formData.append(
-        "car_price_per_month_up_country",
-        inputValues.car_price_per_month_up_country
-      );
+      formData.append("car_price", inputValues.car_price);
       formData.append("car_vin_number", inputValues.car_vin_number);
       formData.append("car_transmission", inputValues.car_transmission);
       formData.append("car_drive_train", inputValues.car_drive_train);
@@ -187,8 +251,8 @@ function AddNewCarRent({ userRefresh }) {
       formData.append("car_interior_color", inputValues.car_interior_color);
       formData.append("car_body_type", inputValues.car_body_type);
       formData.append("car_location", inputValues.car_location);
-      formData.append("car_pickup_choice", inputValues.car_pickup_choice);
-      formData.append("car_dropoff_choice", inputValues.car_dropoff_choice);
+      formData.append("car_condition", inputValues.car_condition);
+      formData.append("car_seller_name", inputValues.car_seller_name);
       formData.append(
         "car_registration_number",
         inputValues.car_registration_number
@@ -198,12 +262,10 @@ function AddNewCarRent({ userRefresh }) {
         "car_control_technique",
         inputValues.car_control_technique
       );
-      formData.append("renter_phone_number", inputValues.renter_phone_number);
-      formData.append("renter_email", inputValues.renter_email);
-      formData.append("renter_note", inputValues.renter_note);
+      formData.append("seller_phone_number", inputValues.seller_phone_number);
+      formData.append("seller_email", inputValues.seller_email);
+      formData.append("seller_note", inputValues.seller_note);
       formData.append("cover_image", inputValues.cover_image);
-      formData.append("car_condition", inputValues.car_condition);
-      formData.append("car_renter_name", inputValues.car_renter_name);
       formData.append(
         "car_standard_features",
         inputValues.car_standard_features_id
@@ -211,11 +273,10 @@ function AddNewCarRent({ userRefresh }) {
       car_images.forEach((file) => {
         formData.append("car_images", file); // Make sure 'file' is an UploadFile object
       });
-      // formData.append("car_images", car_images);
 
-      // console.log(...formData.entries());
-      const response = await axiosInstance.post(
-        "/car_for_rent/create",
+      console.log(...formData.entries());
+      const response = await axiosInstance.put(
+        "/car_for_sale/update",
         formData,
         {
           headers: {
@@ -224,51 +285,13 @@ function AddNewCarRent({ userRefresh }) {
           },
         }
       );
-      // console.log("Submission successful:", response.data);
+      console.log("Submission successful:", response.data);
       notify(response.data.message, "success");
       setLoading(false);
       userRefresh(true);
-      setInputValues({
-        car_name_info: "",
-        car_brand_id: "",
-        car_model_id: "",
-        car_trim_id: "",
-        car_year: "",
-        car_mileage: "",
-        car_price_per_day: "",
-        car_price_per_week: "",
-        car_price_per_month: "",
-        car_price_per_day_up_country: "",
-        car_price_per_week_up_country: "",
-        car_price_per_month_up_country: "",
-        car_location: "",
-        car_exterior_color: "",
-        car_interior_color: "",
-        car_fuel_type: "",
-        car_transmission: "",
-        car_engine_capacity: "",
-        car_fuel_consumption: "",
-        car_drive_train: "",
-        car_body_type: "",
-        car_vin_number: "",
-        car_registration_number: "",
-        car_insurance: "",
-        car_control_technique: "",
-        renter_note: "",
-        cover_image: "",
-        seller_type: "",
-        renter_phone_number: "",
-        renter_email: "",
-        car_standard_features_id: [],
-        car_condition: "",
-        car_renter_name: "",
-        car_pickup_choice: "",
-        car_dropoff_choice: "",
-      });
       dismissButtonRef.current.click();
     } catch (error) {
       console.log("Error adding new car", error);
-      setLoading(false);
     }
   };
   const notify = (message, type) => {
@@ -287,26 +310,28 @@ function AddNewCarRent({ userRefresh }) {
     <>
       <div
         className="modal fade fadeInRight"
-        id="exampleModalgrid"
+        id="editCarForRent"
         tabIndex="-1"
-        aria-labelledby="exampleModalgridLabel"
+        aria-labelledby="editCarForRentLabel"
         aria-modal="true"
       >
         <div className="modal-dialog modal-dialog-centered modal-lg">
           <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalgridLabel">
-                Add a New Car
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="modal-body">
-              <form onSubmit={handleSubmit}>
+            {showModal && (
+              <>
+                <div className="modal-header">
+                  <h5 className="modal-title" id="editCarForRentLabel">
+                    Edit - {car.car_name_info}
+                  </h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div className="modal-body">
+                <form onSubmit={handleSubmit}>
                 <div className="row g-3">
                   <div className="col-lg-6">
                     <div>
@@ -881,10 +906,18 @@ function AddNewCarRent({ userRefresh }) {
                         onChange={handleInputChange}
                       />
                     </div>
+                    <div className="col-lg-6 pt-2">
+                        <img
+                          src={`${imageBaseUrl}${cover_image}`}
+                          alt="Car Cover Image"
+                          width={"100px"}
+                        ></img>
+                      </div>
                   </div>
                   <div className="col-lg-12">
                     <Editor
                       apiKey="xnd39f6aiczpogl36kpm15h9cmzy7n4rs3ds86q3jyyu9wm9"
+                      value={inputValues.seller_note}
                       onInit={(evt, editor) => (editorRef.current = editor)}
                       name="renter_note"
                       onEditorChange={handleEditorChange}
@@ -976,14 +1009,16 @@ function AddNewCarRent({ userRefresh }) {
                             data-testid="loader"
                           />
                         ) : (
-                          "Add new car"
+                          "Update car"
                         )}
                       </button>
                     </div>
                   </div>
                 </div>
               </form>
-            </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -991,4 +1026,4 @@ function AddNewCarRent({ userRefresh }) {
   );
 }
 
-export default AddNewCarRent;
+export default EditCarForRent;
