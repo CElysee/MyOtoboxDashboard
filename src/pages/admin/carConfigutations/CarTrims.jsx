@@ -284,7 +284,9 @@ function CarTrims() {
                             <th>No</th>
                             <th>Brand Name</th>
                             <th>Model Name</th>
+                            <th>Trim Code Name</th>
                             <th>Trim Name</th>
+                            <th>Trim Engine (L)</th>
                             <th>Trim Engine CC</th>
                             <th>Trim Horse Power</th>
                             <th>Create Date</th>
@@ -298,7 +300,9 @@ function CarTrims() {
                                 <td>{index + 1}</td>
                                 <td>{trim.car_brand_name}</td>
                                 <td>{trim.car_model_name}</td>
+                                <td>{trim.trim_code_name}</td>
                                 <td>{trim.trim_name}</td>
+                                <td>{trim.engine_displacement}</td>
                                 <td>{trim.engine}</td>
                                 <td>{trim.trim_hp} HP</td>
                                 <td>{trim.created_at}</td>

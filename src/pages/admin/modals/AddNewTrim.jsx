@@ -363,7 +363,7 @@ function AddNewTrim({ userRefresh }) {
                         <div className="flex-grow-1 ms-2">
                           <form onSubmit={handleExcelSubmit}>
                             <div className="row g-3">
-                              <div className="col-xxl-6">
+                              {/* <div className="col-xxl-6">
                                 <div>
                                   <label
                                     htmlFor="car_brand_id"
@@ -388,8 +388,8 @@ function AddNewTrim({ userRefresh }) {
                                       ))}
                                   </select>
                                 </div>
-                              </div>
-                              <div className="col-xxl-6">
+                              </div> */}
+                              <div className="col-xxl-12">
                                 <div>
                                   <label
                                     htmlFor="trim_excel"
